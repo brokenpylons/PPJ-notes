@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage{unicode-math}
+\usepackage{lualatex-math}
+\setmainfont[
+  BoldFont={STIXTwoText-Bold},
+  ItalicFont={STIXTwoText-Italic},
+  BoldItalicFont={STIXTwoText-BoldItalic}
+]{STIXTwoText-Regular}
+\setmathfont{STIXTwoMath-Regular}
+
+\usepackage{biblatex}
+\addbibresource{references.bib}
+
+\title{Title}
+\author{Me}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Section}
+Text \cite{knuth_fa} text $\Rightarrow$
+
+\printbibliography
+\end{document}

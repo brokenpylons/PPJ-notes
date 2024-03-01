@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: 
+      - README.md
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: cachix/install-nix-action@v15
+    
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: cache
+        key: ${{runner.os}}-cache-closure-${{github.sha}}
+        restore-keys: ${{ runner.os }}-cache-closure-
+        
+    - name: Build
+      run: |
+        if [ -f cache/paper.closure ]; then
+          nix-store --import < cache/paper.closure
+        fi
+        readarray -t paths $(nix build --impure --print-out-paths)
+        echo "${paths[@]}"
+        mkdir -p cache
+        nix-store --export $(nix-store -qR --include-outputs "${paths[@]}") > cache/paper.closure
+    
+    - uses: actions/upload-artifact@v1
+      with:
+        name: paper
+        path: result/paper.pdf
