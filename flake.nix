@@ -47,7 +47,7 @@
 
             buildInputs = [
               (texlive.combine {
-                inherit (texlive) scheme-small luatex biblatex latexmk biber lualatex-math stix2-otf;
+                inherit (texlive) scheme-small luatex biblatex latexmk stix2-otf biber unicode-math lualatex-math tcolorbox environ mathdots;
               })
             ];
           };
