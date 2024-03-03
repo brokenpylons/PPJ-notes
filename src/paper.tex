@@ -30,7 +30,7 @@
 
 \usepackage{mathtools}
 \usepackage{tikz}
-\usetikzlibrary{automata, arrows.meta, positioning, arrows, fit, matrix, shapes.geometric, shapes.misc, calc}
+\usetikzlibrary{automata, backgrounds, arrows.meta, positioning, arrows, fit, matrix, shapes.geometric, shapes.misc, calc}
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,main,foreground}
@@ -45,7 +45,6 @@
 \newcommand{\Special}[1]{\textbf{#1}}
 \newcommand{\Empty}{\varnothing}
 \newcommand{\Null}{\varepsilon}
-\newcommand{\Alphabet}{\Sigma}
 \newcommand{\Language}[1]{\mathcal{L}(#1)}
 \newcommand{\Automaton}[1]{\mathcal{M}(#1)}
 \newcommand{\Str}[1]{\text{\textquotedbl\texttt{#1}\textquotedbl}}
@@ -61,7 +60,8 @@
 \newcommand{\KleenePlus}[1]{#1^+}
 \newcommand{\Err}{\rdiagovfdiag}
 
-\newcommand{\Set}[1]{#1}
+\newcommand{\Set}[1]{\symbf{#1}}
+\newcommand{\Alphabet}{\Set{\Sigma}}
 
 \newcommand{\FIRST}{\textsc{first}}
 \newcommand{\FOLLOW}{\textsc{follow}}
@@ -85,7 +85,7 @@
 \newcommand{\T}[1]{{#1}}
 \newcommand{\Var}[1]{{#1}}
 \newcommand{\Sym}[1]{{#1}}
-\newcommand{\RE}[1]{{#1}}
+\newcommand{\RE}[1]{{\uppercase{#1}}}
 \newcommand{\Lookahead}[1]{{}_{\{{#1}\}}}
 
 \makeatletter
@@ -133,7 +133,7 @@ Jezik je (ne nujno končna) množica nizov.
 
 \Ex
 \begin{equation*}
-  L = \{\Str{}, \Str{DoberDan}, \Str{123}, \Str{/}, \Str{1 + 1} \}
+  \Set{L} = \{\Str{}, \Str{DoberDan}, \Str{123}, \Str{/}, \Str{1 + 1} \}
 \end{equation*}
 
 \section{Regularni izrazi}
@@ -143,29 +143,29 @@ Dva regularna izraza sta enaka, če opisujeta enak jezik.
 
 \section{Končni avtomati}
 
-Končni avtomat je tuple $(Q, \Alphabet, \delta, q_0, F)$, kjer je $Q$ končna množica stanj, $\Sigma$ končna množica znakov ali abeceda, $\delta$ je funkcija prehodov in $F$ končna množica končnih stanj.
+Končni avtomat je tuple $(\Set{Q}, \Alphabet, \delta, q_0, \Set{F})$, kjer je $\Set{Q}$ končna množica stanj, $\Alphabet$ končna množica znakov ali abeceda, $\delta$ je funkcija prehodov in $\Set{F}$ končna množica končnih stanj.
 Tuple lahko implementiramo kot \emph{struct} ali \emph{record}.
-Funkcija prehodov ima signaturo $Q \times \Sigma \not\rightarrow Q$.
+Funkcija prehodov ima signaturo $\Set{Q} \times \Alphabet \not\rightarrow \Set{Q}$.
 Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
 
-\Special{Meta:} Avtomat regularnega izraza $r$ bo označen kot $\Automaton{r}$.
+\Special{Meta:} Avtomat regularnega izraza $\RE{r}$ bo označen kot $\Automaton{\RE{r}}$.
 
 \Special{Meta:} Simbol $\Err$ označuje neveljavno stanje.
 
 \Ex
 \begin{equation}
-  r_1 = \Kleene{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
+  \RE{r}_1 = \Kleene{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
 \end{equation}
 \begin{align*}
-  \Automaton{r_1} &= (Q_1, \Sigma, \delta_1, q_{0, 1}, F_1)\\[1em]
-  Q_1 &= \{1, 2, 3\} \\[1em]
-  \Sigma &= \{\Char{a}, \Char{b}, \Char{c}\} \\[1em]
+  \Automaton{r_1} &= (\Set{Q}_1, \Alphabet, \delta_1, q_{0, 1}, \Set{F}_1)\\[1em]
+  \Set{Q}_1 &= \{1, 2, 3\} \\[1em]
+  \Alphabet &= \{\Char{a}, \Char{b}, \Char{c}\} \\[1em]
   \delta_1(1, \Char{b}) & =  2\\
   \delta_1(2, \Char{a}) & =  1\\
   \delta_1(2, \Char{b}) & =  2\\
   \delta_1(2, \Char{b}) & =  3\\[1em]
   q_{0, 1} &= 1 \\[1em]
-  F_1 &= \{3\}
+  \Set{F}_1 &= \{3\}
 \end{align*}
 
 \begin{center}
@@ -190,7 +190,7 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
       initial text=$ $
     }
 
-    \node[state, initial, label=above left:$\Automaton{r_1}$] (s0) {1};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}_1}$] (s0) {1};
     \node[state, right=of s0] (s1) {2};
     \node[state, accepting, right=of s1] (s2) {3};
 
@@ -206,8 +206,8 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
 Vsak regularni izraz lahko ustreza večim različnim avtomatom.
 
 \begin{gather*}
-  r_2 = \Kleene{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
-  \Automaton{r_2} = (Q_2, \Sigma, \delta_2, q_{0, 2}, F_2)
+  \RE{r}_2 = \Kleene{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
+  \Automaton{\RE{r}_2} = (\Set{Q}_2, \Alphabet, \delta_2, q_{0, 2}, \Set{F}_2)
 \end{gather*}
 
 \begin{center}
@@ -218,7 +218,7 @@ Vsak regularni izraz lahko ustreza večim različnim avtomatom.
       initial text=$ $
     }
 
-    \node[state, initial, label=above left:$\Automaton{r_2}$] (s0) {1};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}_2}$] (s0) {1};
     \node[state, right=of s0] (s1) {2};
     \node[state, right=of s1] (s2) {3};
     \node[state, right=of s2] (s3) {4};
@@ -253,7 +253,7 @@ Funkcijo prehodov lahko definiramo tudi za niz:
 
 Jezik, ki ga avtomat opisuje:
 \begin{equation*}
-  L = \{w \in \Kleene{\Sigma} \mid \Kleene{\delta}(q_0, w) \in F\}
+  \Set{L} = \{w \in \Kleene{\Sigma} \mid \Kleene{\delta}(q_0, w) \in \Set{F}\}
 \end{equation*}
 
 \Ex
@@ -275,7 +275,7 @@ Jezik, ki ga avtomat opisuje:
 \end{align*}
 
 \begin{multline*}
-  L = \{ \Str{bc}, \Str{bbc}, \Str{bbbc}, \ldots, \Str{babc}, \Str{bababc}, \ldots,\\
+  \Set{L} = \{ \Str{bc}, \Str{bbc}, \Str{bbbc}, \ldots, \Str{babc}, \Str{bababc}, \ldots,\\
   \Str{babbc},  \Str{babbbc}, \ldots, \Str{bababbc}, \Str{bababbbc}, \dots \}
 \end{multline*}
 
@@ -300,31 +300,31 @@ Za izvedbo konstrukcije potrebujemo naslednje relacije nad deloma razponanimi re
 
 \subsubsection*{Postopek}
 
-Vhod je regularni izraz $\RE{R}$.
+Vhod je regularni izraz $\RE{r}$.
 
-Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language{R} = \Language{\Automaton{R}}$.
+Izhod je automat $\Automaton{\RE{r}} = (\Set{Q}, \Set{\Sigma}, \delta, q_{0}, \Set{F})$, ker $\Language{\RE{r}} = \Language{\Automaton{R}}$.
 
 \begin{enumerate}
   \item Začnemo z začetnim stanjem:
     \begin{equation*}
-      q_0 = \RE{I}\text{, kjer } \Pos(\RE{R}) \MoveStar \RE{I}
+      q_0 = \RE{i}\text{, kjer } \Pos(\RE{i}) \MoveStar \RE{i}
     \end{equation*}
-  \item Za vsak znak $\Char{a} \in \Alphabet$, iz trenutnega stanja $q = \RE{I}$ pridobimo stanja:
+  \item Za vsak znak $\Char{a} \in \Alphabet$, iz trenutnega stanja $q = \RE{i}$ pridobimo stanja:
     \begin{equation*}
-      q' = \RE{J}\text{, kjer } \RE{I} \MoveX{\Char{a}} \RE{I}' \MoveStar \RE{J}
+      q' = \RE{j}\text{, kjer } \RE{i} \MoveX{\Char{a}} \RE{i}' \MoveStar \RE{j}
     \end{equation*}
-    Če že obstaja stanje $q'' = \RE{J}$, potem $q'$ in $q''$ združimo.
+    Če že obstaja stanje $q'' = \RE{k}$, kjer $\RE{j} = \RE{k}$, potem $q'$ in $q''$ združimo.
   \item Za vsako stanje dodamo prehod $\delta(q, \Char{a}) = q'$.
   \item Postopek nadaljujemo za vsa tako nastala stanja, ki jih še nismo obravnavali.
-  \item Stanje $q = \RE{I}$ je končno, če $\RE{I} = (\RE{R})\Pos$.
+  \item Stanje $q = \RE{i}$ je končno, če $\RE{i} = (\RE{r})\Pos$.
 \end{enumerate}
 
 \subsection{Prazen jezik}
 \begin{tcolorbox}[title={Definicija}]
 \begin{equation*}
   \begin{aligned}
-    \RE{R} &= \Empty\\
-    \Language{R} &= \{\}
+    \RE{r} &= \Empty\\
+    \Language{\RE{R}} &= \{\}
   \end{aligned}
 \end{equation*}
 \end{tcolorbox}
@@ -344,7 +344,7 @@ Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, label=above left:$\Automaton{R}$] (u0) {$\Empty$};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Empty$};
   \end{tikzpicture}
 \end{center}
 
@@ -353,8 +353,8 @@ Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language
 \begin{tcolorbox}[title={Definicija}]
 \begin{equation*}
   \begin{aligned}
-    R &= \Null\\
-    \Language{R} &= \{ \Str{} \}
+    \RE{r} &= \Null\\
+    \Language{\RE{r}} &= \{ \Str{} \}
   \end{aligned}
 \end{equation*}
 \end{tcolorbox}
@@ -374,19 +374,19 @@ Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$\Null\Pos$};
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Null\Pos$};
   \end{tikzpicture}
 \end{center}
 
-Če $\Str{} \in \Language{r}$, potem rečemo, da je $\RE{R}$ \emph{nullable}.
+Če $\Str{} \in \Language{\RE{r}}$, potem rečemo, da je $\RE{r}$ \emph{nullable}.
 
 \subsection{Znak}
 
 \begin{tcolorbox}[title={Definicija}]
 \begin{equation*}
   \begin{aligned}
-    r &= \Char{a}\text{, kjer } \Char{a} \in \Alphabet\\\
-    \Language{r} &= \{ \Str{a} \}
+    \RE{r} &= \Char{a}\text{, kjer } \Char{a} \in \Alphabet\\\
+    \Language{\RE{r}} &= \{ \Str{a} \}
   \end{aligned}
 \end{equation*}
 \end{tcolorbox}
@@ -408,7 +408,7 @@ Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, label=above left:$\Automaton{R}$] (u0) {$\Pos\Char{a}$};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{a}$};
     \node[state, right=of u0] (u1) {$\Char{a}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
   \end{tikzpicture}
@@ -441,8 +441,8 @@ Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language
 \begin{tcolorbox}[title={Definicija}]
 \begin{equation*}
   \begin{aligned}
-  r &= s \Seq t = s \Spc t\\
-  \Language{r} &= \{ u \Seq v \mid u \in \Language{s} \land v \in \Language{t}\}
+    \RE{r} &= \RE{s} \Seq \RE{t} = \RE{s} \Spc \RE{t}\\
+    \Language{\RE{r}} &= \{ u \Seq v \mid u \in \Language{\RE{s}} \land v \in \Language{\RE{t}}\}
   \end{aligned}
 \end{equation*}
 \end{tcolorbox}
@@ -450,47 +450,47 @@ Izhod je automat $\Automaton{R} = (Q, \Sigma, \delta, q_{0}, F)$, ker $\Language
 \begin{tcolorbox}[title={Pravila}]
 \begin{equation*}
   \begin{aligned}
-  s \Seq t &\not= t \Seq s\\
-  s \Seq \Null &= s \\
-  \Null \Seq s &= s   \\
-  s \Seq \Empty &= \Empty \\
-  \Empty \Seq s &= \Empty \\
-  (s \Seq p) \Seq q &= s \Seq (p \Seq q) = s \Seq p \Seq q
+    \RE{s} \Seq \RE{t} &\not= \RE{t} \Seq \RE{s}\\
+    \RE{s} \Seq \Null &= \RE{s} \\
+    \Null \Seq \RE{s} &= \RE{s} \\
+    \RE{s} \Seq \Empty &= \Empty \\
+    \Empty \Seq \RE{s} &= \Empty \\
+    (\RE{s} \Seq \RE{p}) \Seq \RE{q} &= \RE{s} \Seq (\RE{p} \Seq \RE{q}) = \RE{s} \Seq \RE{p} \Seq \RE{q}
   \end{aligned}
 \end{equation*}
 \end{tcolorbox}
 
 \vspace{1em}
-\Special{Poseben primer:} Če $|\Language{s}| = |\Language{t}| = 1$, potem $\Language{s} = \{u\}$ in $\Language{t} = \{v\}$ in $\Language{r} = \{u \Seq v\}$.
+\Special{Poseben primer:} Če $|\Language{\RE{s}}| = |\Language{\RE{t}}| = 1$, potem $\Language{\RE{s}} = \{u\}$ in $\Language{\RE{t}} = \{v\}$ in $\Language{\RE{r}} = \{u \Seq v\}$.
 
 \Ex
 \begin{align*}
-  \Language{s} &= \{\Str{Hello}\}\\
-  \Language{t} &= \{\Str{World}\}\\
-  \Language{r} &= \{\Str{HelloWorld}\}
+  \Language{\RE{s}} &= \{\Str{Hello}\}\\
+  \Language{\RE{t}} &= \{\Str{World}\}\\
+  \Language{\RE{r}} &= \{\Str{HelloWorld}\}
 \end{align*}
 
 Splošno je jezik konkatenacije podoben kartezičnemu produktu.
 \begin{align*}
-  S &= P \times Q \\
-  S &= \{ (x, y) \mid x \in P \land y \in Q\}
+  \Set{S} &= \Set{P} \times \Set{Q} \\
+  \Set{S} &= \{ (x, y) \mid x \in \Set{P} \land y \in \Set{Q}\}
 \end{align*}
 
 \Ex
 \begin{align*}
-  P &= \{1, 2, 3\}\\
-  Q &= \{a, b\}\\
-  S &= \{(1, a), (1, b), (2, a), (2, b), (3, a), (3, b) \}
+  \Set{P} &= \{1, 2, 3\}\\
+  \Set{Q} &= \{a, b\}\\
+  \Set{S} &= \{(1, a), (1, b), (2, a), (2, b), (3, a), (3, b) \}
 \end{align*}
 
-Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in \Language{t}$, z $u \Seq v \in \Language{r}$.
+Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{\RE{s}}$ in $v\in \Language{\RE{t}}$, z $u \Seq v \in \Language{\RE{r}}$.
 
 \Ex
 
 \begin{align*}
-  P &= \{\Str{Dober}, \Str{Lep}\}\\
-  Q &= \{\Str{Dan}, \Str{Večer}, \Str{Tek}\}\\
-  S &= \{\Str{DoberDan}, \Str{DoberVečer}, \Str{DoberTek}, \Str{LepDan}, \Str{LepVečer}, \Str{LepTek} \}
+  \RE{P} &= \{\Str{Dober}, \Str{Lep}\}\\
+  \RE{Q} &= \{\Str{Dan}, \Str{Večer}, \Str{Tek}\}\\
+  \RE{S} &= \{\Str{DoberDan}, \Str{DoberVečer}, \Str{DoberTek}, \Str{LepDan}, \Str{LepVečer}, \Str{LepTek} \}
 \end{align*}
 
 \begin{tcolorbox}[title={Konstrukcija}]
@@ -505,7 +505,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
 \Ex
 \begin{align*}
-  \N{R} &= \Char{a} \Spc \Char{b} \\
+  \N{\RE{r}} &= \Char{a} \Spc \Char{b} \\
 \end{align*}
 \begin{multline*}
   \Pos(\Char{a} \Seq \Char{b}) \Move (\Pos\Char{a}) \Seq \Char{b} \MoveX{\Char{a}}
@@ -520,7 +520,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
       initial text=$ $,
     }
 
-    \node[state, initial, label=above left:$\Automaton{R}$] (u0) {$\Pos\Char{a} \Spc \Char{b}$};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{a} \Spc \Char{b}$};
     \node[state, right=of u0] (u1) {$\Char{a} \Pos \Char{b}$};
     \node[state, accepting, right=of u1] (u2) {$\Char{a} \Spc \Char{b}\Pos$};
     \draw (u0) edge[->] node[auto]{\Char{a}} (u1);
@@ -530,7 +530,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
 \Ex
 \begin{align*}
-  \N{R} &= \Char{a} \Spc \Char{b} \Spc \Char{c} \\
+  \N{\RE{r}} &= \Char{a} \Spc \Char{b} \Spc \Char{c} \\
 \end{align*}
 \begin{multline*}
   \Pos((\Char{a} \Seq \Char{b}) \Seq \Char{c}) \Move
@@ -552,7 +552,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
       initial text=$ $,
     }
 
-    \node[state, initial, label=above left:$\Automaton{R}$] (u0) {$\Pos\Char{a} \Spc \Char{b} \Spc \Char{c}$};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{a} \Spc \Char{b} \Spc \Char{c}$};
     \node[state, right=of u0] (u1) {$\Char{a} \Pos \Char{b} \Spc \Char{c}$};
     \node[state, accepting, right=of u1] (u2) {$\Char{a} \Spc \Char{b} \Pos \Char{c}$};
     \node[state, accepting, right=of u2] (u3) {$\Char{a} \Spc \Char{b} \Spc \Char{c}\Pos$};
@@ -566,7 +566,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
 \subsubsection{"then"}
 \begin{equation*}
-  \Language{\N{r}} = \{ \Str{then} \}
+  \Language{\N{\RE{r}}} = \{ \Str{then} \}
 \end{equation*}
 
 \subsection{Unija}
@@ -575,8 +575,8 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 \begin{tcolorbox}[title={Definicija}]
   \begin{equation*}
     \begin{aligned}
-    r &= s \Union t \\
-      \Language{r} &= \Language{s} \cup \Language{t}
+      \RE{r} &= \RE{s} \Union \RE{t} \\
+      \Language{\RE{r}} &= \Language{\RE{s}} \cup \Language{\RE{t}}
     \end{aligned}
   \end{equation*}
 \end{tcolorbox}
@@ -584,13 +584,13 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 \begin{tcolorbox}[title={Pravila}]
   \begin{equation*}
     \begin{aligned}
-      s \Union t &= t \Union s \\
-      s \Union s &= s \\
-      \Empty \Union s &= s \\
-      s \Union \Empty &= s \\
-      (s \Union p) \Union q &= s \Union (p \Union q) = s \Union p \Union q \\
-      s \Seq (p \Union q) &= s \Seq p \Union s \Seq q\\
-      (p \Union q) \Seq s &= p \Seq s \Union q \Seq s\\
+      \RE{s} \Union \RE{t} &= \RE{t} \Union \RE{s} \\
+      \RE{s} \Union \RE{s} &= \RE{s} \\
+      \Empty \Union \RE{s} &= \RE{s} \\
+      \RE{s} \Union \Empty &= \RE{s} \\
+      (\RE{s} \Union \RE{p}) \Union \RE{q} &= \RE{s} \Union (\RE{p} \Union \RE{q}) = \RE{s} \Union \RE{p} \Union \RE{q} \\
+      \RE{s} \Seq (\RE{p} \Union \RE{q}) &= \RE{s} \Seq \RE{p} \Union \RE{s} \Seq \RE{q}\\
+      (\RE{p} \Union \RE{q}) \Seq \RE{s} &= \RE{p} \Seq \RE{s} \Union \RE{q} \Seq \RE{s}\\
     \end{aligned}
   \end{equation*}
 \end{tcolorbox}
@@ -607,7 +607,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
 \Ex
 \begin{align*}
-  \N{R} &= \Char{a} \Union \Char{b} \\
+  \N{\RE{r}} &= \Char{a} \Union \Char{b} \\
 \end{align*}
 \begin{equation*}
   \Pos(\Char{a} \Union \Char{b}) \Move
@@ -625,7 +625,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
       shorten <>/.style={shorten >=#1, shorten <=#1},
     }
 
-    \node[state, initial, label=above left:$\Automaton{\N{R}}$] (u0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
+    \node[state, initial, label=above left:$\Automaton{\N{\RE{r}}}$] (u0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
     \node[state, accepting, above right=of u0, label={above right:=}] (u1) {$(\Char{a} \Union \Char{b})\Pos$};
 
     \draw (u0.north east) edge[->, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (u1.south west);
@@ -634,7 +634,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
     \draw (u0.south east) edge[->, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{b}$} (u4.north west);
 
-    \node[state, initial, below=3.2of u0, label=above left:$\Automaton{\N{R}}$] (p0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
+    \node[state, initial, below=3.2of u0, label=above left:$\Automaton{\N{\RE{r}}}$] (p0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
     \node[state, accepting, right=1.5cm of p0] (p1) {$(\Char{a} \Union \Char{b})\Pos$};
 
     \draw (p0.north east) edge[->, bend left=40, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p1.north west);
@@ -645,7 +645,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
 \Ex
 \begin{align*}
-  \N{R} &= \Char{a} \Union \Char{b} \Union \Char{c} \\
+  \N{\RE{r}} &= \Char{a} \Union \Char{b} \Union \Char{c} \\
 \end{align*}
 \begin{equation*}
   \Pos((\Char{a} \Union \Char{b}) \Union \Char{c}) \Move
@@ -676,7 +676,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
 
 \Ex
 \begin{equation*}
-  \N{R} = \Char{a} \Spc \Char{b} \Union \Char{a} \Spc \Char{b} \Spc \Char{c} \Union \Char{a} \Spc \Char{c} \Spc \Char{d}
+  \N{\RE{r}} = \Char{a} \Spc \Char{b} \Union \Char{a} \Spc \Char{b} \Spc \Char{c} \Union \Char{a} \Spc \Char{c} \Spc \Char{d}
 \end{equation*}
 
 \begin{center}
@@ -689,7 +689,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
       large/.style={minimum size=1.5cm},
     }
 
-    \node[state, initial, label=above left:$\Automaton{r}$] (u0) {$\Pos\Char{a} \Spc \Char{b} \Union \Pos\Char{a}\Spc\Char{b}\Spc\Char{c} \Union \Pos\Char{a}\Spc\Char{c}\Spc\Char{d}$};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{a} \Spc \Char{b} \Union \Pos\Char{a}\Spc\Char{b}\Spc\Char{c} \Union \Pos\Char{a}\Spc\Char{c}\Spc\Char{d}$};
     \node[state, right=of u0] (u1) {$\Char{a} \Pos\Char{b} \Union \Char{a}\Pos\Char{b}\Spc\Char{c} \Union \Char{a}\Pos\Char{c}\Spc\Char{d}$};
     \node[state, accepting, right=of u1] (u2) {$(\Char{a} \Spc\Char{b} \Union \Char{a}\Spc\Char{b}\Pos\Char{c} \Union \Char{a}\Spc\Char{c}\Spc\Char{d})\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
@@ -704,12 +704,15 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{s}$ in $v\in 
   \end{tikzpicture}
 \end{center}
 
+Avtomat je optimalen.
+Ne vemo za katero ključno besedo smo našli ujemanje.
+
 \subsection*{Leva faktorizacija}
 Skupno predpono izpostavimo.
 
 \Ex
 \begin{align*}
-  \N{R} &= \Char{a} \Spc \Char{b} \Union \Char{a} \Spc \Char{b} \Spc \Char{c} \Union \Char{a} \Spc \Char{c} \Spc \Char{d}\\
+  \N{\RE{r}} &= \Char{a} \Spc \Char{b} \Union \Char{a} \Spc \Char{b} \Spc \Char{c} \Union \Char{a} \Spc \Char{c} \Spc \Char{d}\\
         &= \Char{a} \Seq (\Char{b} \Union \Char{b} \Spc \Char{c} \Union \Char{c} \Spc \Char{d})\\
         &= \Char{a} \Seq (\Char{b} \Seq (\Null \Union \Char{c}) \Union \Char{c} \Spc \Char{d})
 \end{align*}
@@ -718,11 +721,79 @@ Skupno predpono izpostavimo.
 \subsubsection{Ključne besede}
 
 \begin{equation*}
-  \N{R} = \Char{i} \Spc \Char{f} \Union \Char{f} \Spc \Char{o} \Spc \Char{r} \Union \Char{f} \Spc \Char{o} \Spc \Char{r} \Spc \Char{e} \Spc \Char{a} \Spc \Char{c} \Spc \Char{h}
+  \N{\RE{r}} = \Char{i} \Spc \Char{f} \Union \Char{f} \Spc \Char{o} \Spc \Char{r} \Union \Char{f} \Spc \Char{o} \Spc \Char{r} \Spc \Char{e} \Spc \Char{a} \Spc \Char{c} \Spc \Char{h}
 \end{equation*}
 
-Avtomat je optimalen.
-Ne vemo za katero ključno besedo smo našli ujemanje.
+\subsection{Regularne definicije}
+
+\begin{align*}
+  \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
+  \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+  \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
+\end{align*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      %every state/.append style={minimum size=0.5cm},
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      large/.style={minimum size=1.5cm},
+    }
+
+    \node[state, initial, label=above left:$\Automaton{\RE{r}, \RE{p}, \RE{q}}$] (u0) {$\begin{aligned}
+      \N{\RE{r}} &= \Pos\Char{a} \Spc \Char{b}\\
+      \N{\RE{p}} &= \Pos\Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \N{\RE{q}} &= \Pos\Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+    \node[state, right=of u0] (u1) {$\begin{aligned}
+      \N{\RE{r}} &= \Char{a} \Pos \Char{b}\\
+      \N{\RE{p}} &= \Char{a} \Pos \Char{b} \Spc \Char{c}\\
+      \N{\RE{q}} &= \Char{a} \Pos \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+    \node[state, accepting, right=of u1] (u2) {$\begin{aligned}
+      \underline{\N{\RE{r}}} &= \Char{a} \Spc \Char{b}\Pos\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b} \Pos \Char{c}\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+    \node[state, accepting, right=of u2] (u5) {$\begin{aligned}
+      \N{\RE{r}} &= \Char{a} \Spc \Char{b}\\
+      \underline{\N{\RE{p}}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\Pos\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+
+    \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
+    \draw (u1) edge[->] node[auto]{$\Char{b}$} (u2);
+    \draw (u2) edge[->] node[auto]{$\Char{b}$} (u5);
+
+    \node[state, below=of u1] (u4) {$\begin{aligned}
+      \N{\RE{r}} &= \Char{a} \Spc \Char{b}\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{c} \Pos \Char{d}
+    \end{aligned}$};
+
+    \node[state, accepting, below=of u2] (u3) {$\begin{aligned}
+      \N{\RE{r}} &= \Char{a} \Spc \Char{b}\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \underline{\N{\RE{q}}} &= \Char{a} \Spc \Char{c} \Spc \Char{d} \Pos
+    \end{aligned}$};
+
+    \draw (u1) edge[->] node[auto]{$\Char{c}$} (u4);
+    \draw (u4) edge[->] node[auto]{$\Char{d}$} (u3);
+  \end{tikzpicture}
+\end{center}
+
+Nastali avtomat je drevo predpon.
+
+\subsection*{Primeri}
+\subsubsection{Ključne besede}
+
+\begin{align*}
+  \N{\RE{p}} &= \Char{i} \Spc \Char{f} \\
+  \N{\RE{q}} &= \Char{f} \Spc \Char{o} \Spc \Char{r} \\
+  \N{\RE{t}} &= \Char{f} \Spc \Char{o} \Spc \Char{r} \Spc \Char{e} \Spc \Char{a} \Spc \Char{c} \Spc \Char{h} \\
+\end{align*}
 
 \subsection{Množica znakov}
 \Reset
@@ -730,21 +801,180 @@ Ne vemo za katero ključno besedo smo našli ujemanje.
 \begin{tcolorbox}[title={Definicija}]
 \begin{equation*}
   \begin{aligned}
-    r &= S\text{, kjer } S \subseteq \Alphabet \\
-    &= \Char{a} \Union \dots \Union \Char{b}\text{, kjer } \Char{a}, \dots, \Char{b} \in S\\
-    \Language{r} &= S
+    R &= \Set{S}\text{, kjer } \Set{S} \subseteq \Alphabet \\
+    &= \Char{a} \Union \dots \Union \Char{b}\text{, kjer } \Char{a}, \dots, \Char{b} \in \Set{S}\\
+    \Language{\RE{r}} &= \Set{S}
   \end{aligned}
 \end{equation*}
 \end{tcolorbox}
 
-    %\node[state, initial, below=2of p0, label=above left:$\Automaton{\N{r}}$] (q0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
-    %\node[state, accepting, right=2.5cm of q0] (q1) {$(\Char{a} \Union \Char{b})\Pos$};
-%
-%    \draw (q0) edge[->] node[auto]{$\{\Char{a}, \Char{b}\}$} (q1);
-%
-%
-%  \end{tikzpicture}
-%\end{center}
+Množica znakov se lahko predstavi kot šop prehodov (eden za vsak znak) ali pa en sam prehod označen z množico.
+
+\Ex
+\begin{align*}
+  \N{\RE{r}} &= \Char{a} \Union \Char{b} = \{\Char{a}, \Char{b}\} \\
+\end{align*}
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+
+    \node[state, initial, label=above left:$\Automaton{\N{\RE{r}}}$] (p0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
+    \node[state, accepting, right=1.5cm of p0] (p1) {$(\Char{a} \Union \Char{b})\Pos$};
+
+    \draw (p0.north east) edge[->, bend left=40, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p1.north west);
+    \draw (p0.south east) edge[->, bend right=40, shorten <>=-2pt+\pgflinewidth] node[below]{$\Char{b}$} (p1.south west);
+
+    \node[state, initial, below=2of p0, label=above left:$\Automaton{\N{\RE{r}}}$] (q0) {$\Pos\Char{a} \Union \Pos\Char{b}$};
+    \node[state, accepting, right=2.5cm of q0] (q1) {$(\Char{a} \Union \Char{b})\Pos$};
+
+    \draw (q0) edge[->] node[auto]{$\{\Char{a}, \Char{b}\}$} (q1);
+
+    \node[state, initial, below=2of q0, label=above left:$\Automaton{\N{\RE{r}}}$] (t0) {$\{\Pos\Char{a}, \Pos\Char{b}\}$};
+    \node[state, accepting, right=2.5cm of t0] (t1) {$\{\Char{a}, \Char{b}\}\Pos$};
+
+    \draw (t0) edge[->] node[auto]{$\{\Char{a}, \Char{b}\}$} (t1);
+  \end{tikzpicture}
+\end{center}
+
+\Ex
+\begin{align*}
+  \N{\RE{r}} &= \{\Char{a}, \Char{b}\}\\
+  \N{\RE{s}} &= \{\Char{b}, \Char{c}, \Char{d}\}
+\end{align*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+
+    \node[state, initial, below=2of q0, label=above left:$\Automaton{\N{\RE{r}}, \N{\RE{s}}}$] (t0) {$\begin{aligned}\RE{r} &= \{\Pos\Char{a}, \Pos\Char{b}\}\\ \RE{s} &= \{\Pos\Char{b}, \Pos\Char{c}, \Pos\Char{d}\}\end{aligned}$};
+    \node[state, accepting, above right=2.5cm of t0] (t1) {$\begin{aligned}\RE{r} &= \{\Char{a}, \Char{b}\}\Pos\\ \RE{s} &= \{\Char{b}, \Char{c}, \Char{d}\}\end{aligned}$};
+    \node[state, accepting, right=2.5cm of t0] (t2) {$\begin{aligned}\RE{r} &= \{\Char{a}, \Char{b}\}\Pos\\ \RE{s} &= \{\Char{b}, \Char{c}, \Char{d}\}\Pos\end{aligned}$};
+    \node[state, accepting, below right=2.5cm of t0] (t3) {$\begin{aligned}\RE{r} &= \{\Char{a}, \Char{b}\}\\ \RE{s} &= \{\Char{b}, \Char{c}, \Char{d}\}\Pos\end{aligned}$};
+
+    \draw (t0.north east) edge[->, shorten <>=-2pt+\pgflinewidth] node[auto]{$\{\Char{a}\}$} (t1.south west);
+    \draw (t0) edge[->] node[auto]{$\{\Char{b}\}$} (t2);
+    \draw (t0.south east) edge[->, shorten <>=-2pt+\pgflinewidth] node[auto]{$\{\Char{c}, \Char{d}\}$} (t3.north west);
+  \end{tikzpicture}
+\end{center}
+
+\subsection*{Primeri}
+
+\subsubsection{Y/N}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{Y}, \Str{N} \}
+\end{equation*}
+
+\begin{equation*}
+  \N{\RE{r}} = \{ \Char{Y}, \Char{N} \}
+\end{equation*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+
+    \node[state, initial, label=above left:$\Automaton{\N{\RE{r}}}$] (p0) {$\{ \Pos\Char{Y}, \Pos\Char{N} \}$};
+    \node[state, accepting, right=1.5cm of p0] (p1) {$\{ \Char{Y}, \Char{N} \}\Pos$};
+
+    \node[state, initial, below=of p0, label=above left:$\Automaton{\N{\RE{r}}}$] (q0) {$\{ \Pos\Char{Y}, \Pos\Char{N} \}$};
+    \node[state, accepting, right=2.5cm of q0] (q1) {$\{ \Char{Y}, \Char{N} \}\Pos$};
+
+
+    \draw (q0) edge[->] node[auto]{$\{\Char{Y}, \Char{N} \} $} (q1);
+
+    \draw (p0.north east) edge[->, bend left=40, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{Y}$} (p1.north west);
+    \draw (p0.south east) edge[->, bend right=40, shorten <>=-2pt+\pgflinewidth] node[below]{$\Char{N}$} (p1.south west);
+  \end{tikzpicture}
+\end{center}
+\Next
+
+\subsubsection{Števke}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{0}, \Str{1}, \Str{2}, \dots, \Str{9} \}
+\end{equation*}
+
+\begin{equation*}
+  \N{\RE{r}} = \{ \Char{0}, \Char{1}, \Char{2}, \dots, \Char{9} \}
+\end{equation*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+
+    \node[state, initial, label=above left:$\Automaton{\N{\RE{r}}}$] (p0) {$\{ \Pos\Char{0}, \Pos\Char{1}, \Pos\Char{2}, \dots, \Pos\Char{9} \}$};
+    \node[state, accepting, right=1.5cm of p0] (p1) {$\{ \Char{0}, \Char{1}, \Char{2}, \dots, \Char{9} \}\Pos$};
+    \node at ($(p0.east)!0.5!(p1.west)$) {\Dots{}};
+
+    \node[state, initial, below=2of p0, label=above left:$\Automaton{\N{\RE{r}}}$] (q0) {$\{ \Pos\Char{0}, \Pos\Char{1}, \Pos\Char{2}, \dots, \Pos\Char{9} \}$};
+    \node[state, accepting, right=2.5cm of q0] (q1) {$\{ \Char{0}, \Char{1}, \Char{2}, \dots, \Char{9} \} \Pos$};
+
+
+    \draw (q0) edge[->] node[auto]{$\{\Char{0}, \Char{1}, \Char{2}, \ldots, \Char{9} \} $} (q1);
+
+    \draw (p0.north east) edge[->, bend left=40, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{0}$} (p1.north west);
+    \draw (p0.south east) edge[->, bend right=40, shorten <>=-2pt+\pgflinewidth] node[below]{$\Char{9}$} (p1.south west);
+  \end{tikzpicture}
+\end{center}
+\Next
+
+\subsubsection{Male črke}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{a}, \Str{b}, \Str{c}, \dots, \Str{z} \}
+\end{equation*}
+\Next
+
+\subsubsection{Velike in male črke}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{A}, \Str{B}, \Str{C}, \dots, \Str{Z}, \Str{a}, \Str{b}, \Str{c}, \dots, \Str{z} \}
+\end{equation*}
+\Next
+
+\subsubsection{Heksadecimalne števke}
+
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{0}, \Str{1}, \Str{2}, \dots, \Str{9}, \Str{A}, \dots, \Str{F} \}
+\end{equation*}
+
+\subsubsection{"then", "Then", "THEN", "theN", ...}
+\begin{equation*}
+  \N{\RE{r}} = \{\Char{T}, \Char{t}\} \Seq \{\Char{H}, \Char{h}\} \Seq \{\Char{E}, \Char{e}\} \Seq \{\Char{N}, \Char{n}\}
+\end{equation*}
+
+\Next
+\subsubsection{Bajt po osmiško}
+
+\begin{equation*}
+  \N{\RE{r}} = \{\Char{0}, \dots, \Char{3}\} \Seq \{\Char{0}, \dots, \Char{7}\} \Seq \{\Char{0}, \dots, \Char{7}\}
+\end{equation*}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{000}, \Str{001}, \Str{002}, \dots, \Str{377} \}
+\end{equation*}
+\Next
 
 \subsection{Opcija}
 \Reset
@@ -752,8 +982,8 @@ Ne vemo za katero ključno besedo smo našli ujemanje.
 \begin{tcolorbox}[title={Definicija}]
   \begin{equation*}
     \begin{aligned}
-      \Opt{S} &= \Null \Union s\\
-      \Language{\Opt{S}} &= \{\Str{}\} \cup \Language{s}
+      \Opt{\RE{s}} &= \Null \Union \RE{s}\\
+      \Language{\Opt{\RE{s}}} &= \{\Str{}\} \cup \Language{\RE{s}}
     \end{aligned}
   \end{equation*}
 \end{tcolorbox}
@@ -769,6 +999,21 @@ Ujemanje $S$ 0 ali 1 krat.
 \end{equation*}
 \end{tcolorbox}
 
+\Ex
+\begin{equation*}
+  \N{\RE{r}} = \Opt{\Char{a}}
+\end{equation*}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{}, \Str{a} \}
+\end{equation*}
+
+\begin{equation*}
+  \Pos(\Opt{\Char{a}}) \Move
+  (\Opt{(\Pos\Char{a})})\Pos \MoveX{\Char{a}}
+  \Opt{(\Char{a}\Pos)} \Move
+  \Opt{(\Char{a})}\Pos
+\end{equation*}
 \begin{center}
   \begin{tikzpicture}
     \tikzset{
@@ -782,33 +1027,25 @@ Ujemanje $S$ 0 ali 1 krat.
   \end{tikzpicture}
 \end{center}
 
-\subsection{Potence}
-\Reset
-
-\begin{tcolorbox}[title={Definicija}]
-\begin{equation*}
-  \begin{aligned}
-    \Rep{s}{0} &= \Null\\
-    \Rep{s}{i+1} &= \Rep{s}{i} \Seq s\\[1em]
-    \Rep{s}{i} &= \underbrace{s \Seq \ldots \Seq s}_{i}\\[1em]
-    \Language{\Rep{s}{0}} &= \Null\\
-    \Language{\Rep{s}{i+1}} &= \{u \Seq v \mid u \in \Language{\Rep{s}{i}} \land v \in \Language{s}\}
-  \end{aligned}
-\end{equation*}
-\end{tcolorbox}
+\Ex
 \begin{align*}
+  \N{\RE{s}} &= \Char{a} \Seq \Char{b}\\
+  \N{\RE{r}} &= \Opt{(\Char{a} \Seq \Char{b})}
 \end{align*}
-
-\begin{tcolorbox}[title={Konstrukcija}]
-\begin{equation*}
-  \begin{aligned}
-    \Pos(\Rep{\RE{R}}{n}) &\Move \Rep{(\Pos\RE{R})}{n}\\
-    \Rep{(\RE{R}\Pos)}{n} &\Move \Rep{(\Pos\RE{R})}{n-1}\\
-    \Rep{(\Pos\RE{R})}{0} &\Move (\Rep{\RE{R}}{0})\Pos
-  \end{aligned}
-\end{equation*}
-\end{tcolorbox}
-
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{\Str{ab}\} \\
+  \Language{\N{\RE{r}}} &= \{\Str{}, \Str{ab}\}
+\end{align*}
+\begin{multline*}
+  \Pos(\Opt{(\Char{a} \Seq \Char{b})}) \Move
+  (\Opt{\Pos(\Char{a} \Seq \Char{b})})\Pos \Move
+  (\Opt{((\Pos\Char{a}) \Seq \Char{b})})\Pos \MoveX{\Char{a}}
+  \Opt{((\Char{a}\Pos) \Seq \Char{b})} \Move\\
+  \Opt{(\Char{a} \Seq (\Pos\Char{b}))} \MoveX{\Char{b}}
+  \Opt{(\Char{a} \Seq (\Char{b}\Pos))} \Move
+  \Opt{((\Char{a} \Seq \Char{b})\Pos)} \Move
+  (\Opt{(\Char{a} \Seq \Char{b})})\Pos
+\end{multline*}
 \begin{center}
   \begin{tikzpicture}
     \tikzset{
@@ -816,13 +1053,94 @@ Ujemanje $S$ 0 ali 1 krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$(\Pos\Char{a})^2$};
-    \node[state, accepting, right=of u0] (u1) {$(\Pos\Char{a})^1$};
-    \node[state, accepting, right=of u1] (u2) {$(\Char{a}^0)\Pos$};
+    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$(\Opt{(\Pos\Char{a} \Spc \Char{b})})\Pos$};
+    \node[state, right=of u0] (u1) {$\Opt{(\Char{a} \Pos \Char{b})}$};
+    \node[state, accepting, right=of u1] (u2) {$(\Opt{(\Char{a} \Spc \Char{b})})\Pos$};
+    \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
+    \draw (u1) edge[->] node[auto]{$\Char{b}$} (u2);
+  \end{tikzpicture}
+\end{center}
+
+\subsection{Potence}
+\Reset
+
+\begin{tcolorbox}[title={Definicija}]
+\begin{equation*}
+  \begin{aligned}
+    \Rep{\RE{s}}{0} &= \Null\\
+    \Rep{\RE{s}}{i+1} &= \Rep{\RE{s}}{i} \Seq \RE{s}\\[1em]
+    \Rep{\RE{s}}{i} &= \underbrace{\RE{s} \Seq \ldots \Seq \RE{s}}_{i}\\[1em]
+    \Language{\Rep{\RE{s}}{0}} &= \Null\\
+    \Language{\Rep{\RE{s}}{i+1}} &= \{u \Seq v \mid u \in \Language{\Rep{\RE{s}}{i}} \land v \in \Language{\RE{s}}\}
+  \end{aligned}
+\end{equation*}
+\end{tcolorbox}
+\begin{align*}
+\end{align*}
+
+%\begin{tcolorbox}[title={Konstrukcija}]
+%\begin{equation*}
+%  \begin{aligned}
+%    \Pos(\Rep{\RE{R}}{n}) &\Move \Rep{(\Pos\RE{R})}{n}\\
+%    \Rep{(\RE{R}\Pos)}{n} &\Move \Rep{(\Pos\RE{R})}{n-1}\\
+%    \Rep{(\Pos\RE{R})}{0} &\Move (\Rep{\RE{R}}{0})\Pos
+%  \end{aligned}
+%\end{equation*}
+%\end{tcolorbox}
+
+\Ex
+\begin{equation*}
+  \N{\RE{r}} = \Rep{\Char{a}}{2} = \Char{a} \Seq \Char{a}
+\end{equation*}
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{ \Str{a}, \Str{a} \}
+\end{equation*}
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+    }
+    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$\Pos\Char{a} \Spc \Char{a}$};
+    \node[state, accepting, right=of u0] (u1) {$\Char{a} \Pos \Char{a}$};
+    \node[state, accepting, right=of u1] (u2) {$\Char{a} \Spc \Char{a}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
   \end{tikzpicture}
 \end{center}
+
+\subsection*{Primeri}
+
+\subsubsection{"aaaa"}
+
+\begin{align*}
+  \N{\RE{s}} &= \Char{a} \\
+  \N{\RE{r}} &= \Char{a}^4
+\end{align*}
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{\Str{a}\} \\
+  \Language{\N{\RE{r}}} &= \{\Str{aaaa}\}
+\end{align*}
+\Next
+
+\subsubsection{"abab"}
+
+\begin{align*}
+  \N{\RE{s}} &= \Char{a} \Spc \Char{b} \\
+  \N{\RE{r}} &= (\Char{a} \Spc \Char{b})^2
+\end{align*}
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{\Str{ab}\} \\
+  \Language{\N{\RE{r}}} &= \{\Str{abab}\}
+\end{align*}
+\Next
+
+\subsubsection{Bajt po osmiško}
+\begin{equation*}
+  \N{\RE{r}} = \{\Char{0}, \dots, \Char{3}\} \Seq (\{\Char{0}, \dots, \Char{7}\})^2
+\end{equation*}
+\Next
 
 \subsection{Kleene-ovo zaprtje}
 \Reset
@@ -830,10 +1148,10 @@ Ujemanje $S$ 0 ali 1 krat.
 \begin{tcolorbox}[title={Definicija}]
   \begin{equation*}
     \begin{aligned}
-      \Kleene{s} &= \Null \Union s \Union s \Seq s \Union s \Seq s \Seq s \Union \ldots \\
-      &= \Rep{s}{0} \Union \Rep{s}{1} \Union \Rep{s}{2} \Union \ldots \\
-      &= \Big\vert_{i = 0}^\infty \Rep{s}{i}\\
-      \Language{\Kleene{s}} &= \bigcup_{i = 0}^\infty \Language{s^i}
+      \Kleene{\RE{s}} &= \Null \Union \RE{s} \Union \RE{s} \Seq \RE{s} \Union \RE{s} \Seq \RE{s} \Seq \RE{s} \Union \ldots \\
+      &= \Rep{\RE{s}}{0} \Union \Rep{\RE{s}}{1} \Union \Rep{\RE{s}}{2} \Union \ldots \\
+      &= \Big\vert_{i = 0}^\infty \Rep{\RE{s}}{i}\\
+      \Language{\Kleene{\RE{s}}} &= \bigcup_{i = 0}^\infty \Language{\RE{s}^i}
     \end{aligned}
   \end{equation*}
 \end{tcolorbox}
@@ -846,12 +1164,12 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
     \begin{aligned}
       \Kleene{\Empty} &= \Null\\
       \Kleene{\Null} &= \Null\\
-      \Null \Union \Kleene{s} &= \Kleene{s}\\
-      \Kleene{s} \Union \Null &= \Kleene{s}\\
-      \Kleene{(\Kleene{s})} &= \Kleene{s}\\
-      \Kleene{(s \Union t)} &= \Kleene{(\Kleene{s} \Seq t)} \Seq \Kleene{s}\\
-      \Kleene{(s \Seq t)} &= \Null \Union s \Seq \Kleene{(t \Seq s)} \Seq t\\
-      \Kleene{s} &= (\Null \Union s \Union ... \Union \Rep{s}{i - 1}) \Seq \Kleene{(\Rep{s}{i})}
+      \Null \Union \Kleene{\RE{s}} &= \Kleene{\RE{s}}\\
+      \Kleene{\RE{s}} \Union \Null &= \Kleene{\RE{s}}\\
+      \Kleene{(\Kleene{\RE{s}})} &= \Kleene{\RE{s}}\\
+      \Kleene{(\RE{s} \Union \RE{t})} &= \Kleene{(\Kleene{\RE{s}} \Seq \RE{t})} \Seq \Kleene{\RE{s}}\\
+      \Kleene{(\RE{s} \Seq \RE{t})} &= \Null \Union \RE{s} \Seq \Kleene{(\RE{t} \Seq \RE{s})} \Seq \RE{t}\\
+      \Kleene{\RE{s}} &= (\Null \Union \RE{s} \Union ... \Union \Rep{\RE{s}}{i - 1}) \Seq \Kleene{(\Rep{\RE{s}}{i})}
     \end{aligned}
   \end{equation*}
 \end{tcolorbox}
@@ -865,6 +1183,21 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
 \end{equation*}
 \end{tcolorbox}
 
+\Ex
+\begin{equation*}
+  \N{\RE{r}} = \Kleene{\Char{a}}
+\end{equation*}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{\Str{}, \Str{a}, \Str{aa}, \Str{aaa}, \dots\}
+\end{equation*}
+
+\begin{equation*}
+  \Pos(\Kleene{\Char{a}}) \Move
+  (\Kleene{(\Pos\Char{a})})\Pos \MoveX{\Char{a}}
+  \Kleene{(\Char{a}\Pos)} \Move
+  (\Kleene{(\Pos\Char{a})})\Pos \MoveX{\Char{a}} \cdots
+\end{equation*}
 \begin{center}
   \begin{tikzpicture}
     \tikzset{
@@ -872,11 +1205,11 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{R}$, label={above right:=}] (u0) {$(\Kleene{(\Pos\Char{a})})\Pos$};
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$(\Kleene{(\Pos\Char{a})})\Pos$};
     \node[state, accepting, right=of u0, label={above right:=}] (u1) {$(\Kleene{(\Pos\Char{a})})\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
 
-    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{r}$] (p0) {$(\Kleene{(\Pos\Char{a})})\Pos$};
+    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$(\Kleene{(\Pos\Char{a})})\Pos$};
     \draw (p0) edge[->, loop right] node[auto]{$\Char{a}$} (p0);
   \end{tikzpicture}
 \end{center}
@@ -887,12 +1220,12 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
 \begin{tcolorbox}[title={Definicija}]
   \begin{equation*}
     \begin{aligned}
-      \KleenePlus{s} &= s \Union s \Seq s \Union s \Seq s \Seq s \Union \ldots \\
-      &= \Rep{s}{1} \Union \Rep{s}{2} \Union \ldots \\
-      &= \Big\vert_{i = 1}^\infty \Rep{s}{i}\\
-      \Language{\KleenePlus{s}} &= \bigcup_{i = 1}^\infty \Language{s^i}\\[1em]
-      \Kleene{s} &= \Null \Union \KleenePlus{s} = \Opt{(\KleenePlus{s})} = \KleenePlus{(\Opt{s})}\\
-      \Language{\Kleene{r}} &= \{\Str{}\} \cup \Language{\KleenePlus{r}}
+      \KleenePlus{\RE{s}} &= \RE{s} \Union \RE{s} \Seq \RE{s} \Union \RE{s} \Seq \RE{s} \Seq \RE{s} \Union \ldots \\
+      &= \Rep{\RE{s}}{1} \Union \Rep{\RE{s}}{2} \Union \ldots \\
+      &= \Big\vert_{i = 1}^\infty \Rep{\RE{s}}{i}\\
+      \Language{\KleenePlus{\RE{s}}} &= \bigcup_{i = 1}^\infty \Language{\RE{s}^i}\\[1em]
+      \Kleene{\RE{s}} &= \Null \Union \KleenePlus{\RE{s}} = \Opt{(\KleenePlus{\RE{s}})} = \KleenePlus{(\Opt{\RE{s}})}\\
+      \Language{\Kleene{\RE{r}}} &= \{\Str{}\} \cup \Language{\KleenePlus{\RE{r}}}
     \end{aligned}
   \end{equation*}
 \end{tcolorbox}
@@ -900,11 +1233,31 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
 Ujemanje $s$ 1 ali več krat.
 Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
 
+\begin{tcolorbox}[title={Konstrukcija}]
 \begin{equation*}
   \begin{aligned}
     \Pos(\KleenePlus{\RE{R}}) &\Move \KleenePlus{(\Pos\RE{R})}\\
     \KleenePlus{(\RE{R}\Pos)} &\Move (\KleenePlus{(\Pos\RE{R})})\Pos
   \end{aligned}
+\end{equation*}
+\end{tcolorbox}
+
+\Ex
+\begin{equation*}
+  \N{\RE{r}} = \KleenePlus{\Char{a}}
+\end{equation*}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{\Str{a}, \Str{aa}, \Str{aaa}, \dots\}
+\end{equation*}
+
+\begin{equation*}
+  \Pos(\KleenePlus{\Char{a}}) \Move
+  \KleenePlus{(\Pos\Char{a})} \MoveX{\Char{a}}
+  \KleenePlus{(\Char{a}\Pos)} \Move
+  (\KleenePlus{(\Pos\Char{a})})\Pos \MoveX{\Char{a}}
+  \KleenePlus{(\Char{a}\Pos)} \Move
+  (\KleenePlus{(\Pos\Char{a})})\Pos \MoveX{\Char{a}} \cdots
 \end{equation*}
 
 \begin{center}
@@ -914,13 +1267,13 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{r}$] (u0) {$\KleenePlus{(\Pos\Char{a})}$};
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$] (u0) {$\KleenePlus{(\Pos\Char{a})}$};
     \node[state, accepting, right=of u0, label={above right:=}] (u1) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
     \node[state, accepting, right=of u1, label={above right:=}] (u2) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
 
-    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{r}$] (p0) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
+    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
     \node[state, accepting, right=of p0] (p1) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
     \draw (p0) edge[->] node[auto]{$\Char{a}$} (p1);
     \draw (p1) edge[->, loop right] node[auto]{$\Char{a}$} (p1);
@@ -930,55 +1283,126 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
 \subsection*{Primeri}
 \subsubsection{Števila}
 \begin{equation*}
-  \N{R} = \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}
+  \N{\RE{r}} = \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}
 \end{equation*}
 \Next
 
 \subsubsection{Naravna števila}
 \begin{equation*}
-  \Language{\N{r}} = \{\Str{1}, \Str{2}, \dots\}
+  \Language{\N{\RE{r}}} = \{\Str{1}, \Str{2}, \dots\}
 \end{equation*}
 \Next
 
 \subsubsection{Cela števila}
-\begin{align*}
-  \N{s} &= \{\Char{0}, \dots, \Char{9}\} \\
-  \N{r} &= (\Char{+} \Union \Char{-}) \Seq \KleenePlus{\N{s}}
-\end{align*}
+\begin{equation*}
+  \N{\RE{r}} = (\Char{+} \Union \Char{-}) \Seq \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}
+\end{equation*}
 \Next
 
 \subsubsection{Heksadecimalna števila}
 \begin{equation*}
-  \Language{\N{r}} = \{\Str{0x0}, \Str{0x1}, \dots, \Str{0xA}, \dots, \Str{0xFFFF}, \dots\}
+  \Language{\N{\RE{r}}} = \{\Str{0x0}, \Str{0x1}, \dots, \Str{0xA}, \dots, \Str{0xFFFF}, \dots\}
 \end{equation*}
 \Next
 
 \subsubsection{Barve}
 \begin{equation*}
-  \Language{\N{r}} = \{\Str{\#000000}, \dots, \Str{\#FFFFFF}\}
+  \Language{\N{\RE{r}}} = \{\Str{\#000000}, \dots, \Str{\#FFFFFF}\}
 \end{equation*}
 \Next
 
 \subsubsection{Števila s plavajočo vejico}
-\begin{align*}
-  \N{s} &= \{\Char{0}, \dots, \Char{9}\} \\
-  \N{r} &= (\Char{+} \Union \Char{-}) \Seq \KleenePlus{\N{s}} \Spc \Char{.} \Spc \Kleene{\N{s}}
-\end{align*}
+\begin{equation*}
+  \N{\RE{r}} = (\Char{+} \Union \Char{-}) \Seq \KleenePlus{\{\Char{0}, \dots, \Char{9}\}} \Spc \Char{.} \Spc \Kleene{\{\Char{0}, \dots, \Char{9}\}}
+\end{equation*}
 \Next
 
 \subsubsection{Imena spremenljivk}
-\begin{align*}
-  \N{l} &= \{\Char{a}, \dots, \Char{z}\} \\
-  \N{r} &= \KleenePlus{\N{l}}
-\end{align*}
-
+\begin{equation*}
+  \N{\RE{r}} = \KleenePlus{\{\Char{a}, \dots, \Char{z}\}}
+\end{equation*}
 
 \subsubsection{Ključne besede in imena spremenljivk}
 \begin{align*}
-  \N{i} &= \KleenePlus{\{\Char{a}, \dots, \Char{z}\}}\\
-  \N{k} &= \Char{a} \Spc \Char{b} \Union \Char{a} \Spc \Char{b} \Spc \Char{c} \Union \Char{a} \Spc \Char{c} \Spc \Char{d}\\
-  \N{r} &= \N{i} \Union \N{k}
+  \N{\RE{r}} &= \KleenePlus{\{\Char{a}, \dots, \Char{z}\}}\\
+  \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
+  \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+  \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
 \end{align*}
 
+  \hspace*{-90px}
+  \begin{tikzpicture}
+    \tikzset{
+      ->,
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+    }
+
+    \clip (-3.45,-5) rectangle (30, 10);
+
+    \node[state, initial, label=above left:$\Automaton{\N{r}}$] (v0) {$\begin{aligned}
+      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
+      \N{\RE{p}} &= \Pos\Char{a} \Spc \Char{b}\\
+      \N{\RE{q}} &= \Pos\Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \N{\RE{t}} &= \Pos\Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+
+    \node[state, accepting, right=of v0] (v1) {$\begin{aligned}
+      \underline{\N{\RE{r}}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\Pos\\
+      \N{\RE{p}} &= \Char{a} \Pos \Char{b}\\
+      \N{\RE{q}} &= \Char{a} \Pos \Char{b} \Spc \Char{c}\\
+      \N{\RE{t}} &= \Char{a} \Pos \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+
+    \node[state, accepting, right=of v1] (v2) {$\begin{aligned}
+      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\Pos\\
+      \underline{\N{\RE{p}}} &= \Char{a} \Spc \Char{b}\Pos\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Pos \Char{c}\\
+      \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+    \draw (v0) edge[->] node[auto]{$\Char{a}$} (v1);
+    \draw (v1) edge[->] node[auto]{$\Char{b}$} (v2);
+
+    \node[state, accepting, right=of v2] (v3) {$\begin{aligned}
+      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
+      \underline{\N{\RE{q}}} &= \Char{a} \Spc \Char{b} \Spc \Char{c} \Pos\\
+      \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+    \draw (v2) edge[->] node[auto]{$\Char{c}$} (v3);
+
+    \node[state, accepting, below right=of v1] (v4) {$\begin{aligned}
+      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Pos \Char{d}
+    \end{aligned}$};
+
+    \node[state, accepting, right=of v4] (v5) {$\begin{aligned}
+      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\Pos\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \underline{\N{\RE{t}}} &= \Char{a} \Spc \Char{c} \Spc \Char{d} \Pos
+    \end{aligned}$};
+
+    \draw (v1) edge[->] node[auto]{$\Char{c}$} (v4);
+    \draw (v4) edge[->] node[auto]{$\Char{d}$} (v5);
+
+    \node[state, accepting, above=2cm of v1] (s) {$\begin{aligned}
+      \underline{\N{\RE{r}}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\Pos\\
+      \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
+      \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
+      \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
+    \end{aligned}$};
+
+    \draw (v0) edge[->, bend left] node[auto]{$A - \{\Char{a}\}$} (s);
+    \draw (v1) edge[->, bend right] node[auto]{$A - \{\Char{b}, \Char{c}\}$} (s);
+    \draw (v2) edge[->, bend right] node[right]{$A - \{\Char{c}\}$} (s);
+    \draw (v3) edge[->, bend right=50] node[above right]{$A$} (s);
+    \draw (v4) edge[->, out=-150, in=170, looseness=2.5] node[left ]{$A - \{\Char{d}\}$} (s);
+    \draw (v5) edge[->, out=25, in=45, looseness=1.2] node[right]{$A$} (s);
+    \draw (s) edge[->, loop] node[above]{$A$} (s);
+  \end{tikzpicture}
 
 \end{document}
