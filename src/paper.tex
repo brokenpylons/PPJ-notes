@@ -397,7 +397,7 @@ Izhod je automat $\Automaton{\RE{r}} = (\Set{Q}, \Set{\Sigma}, \delta, q_{0}, \S
 \begin{equation*}
   \begin{aligned}
     \Pos\Char{a} &\MoveX{\Char{a}} \Char{a}\Pos\\
-    %(\RE{R})\Pos &\MoveX{\Char{a}} \RE{R}\\
+    (\RE{R})\Pos &\MoveX{\Char{a}} \RE{R}\\
     \Pos\Char{a} &\MoveX{\Char{b}} \Char{a}\text{, kjer } \Char{a} \neq \Char{b}
   \end{aligned}
 \end{equation*}
@@ -868,6 +868,7 @@ Množica znakov se lahko predstavi kot šop prehodov (eden za vsak znak) ali pa 
     \draw (t0.south east) edge[->, shorten <>=-2pt+\pgflinewidth] node[auto]{$\{\Char{c}, \Char{d}\}$} (t3.north west);
   \end{tikzpicture}
 \end{center}
+Paziti moramo, da avtomat ne postane nedeterminističen.
 
 \subsection*{Primeri}
 
@@ -1308,15 +1309,15 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
       initial text=$ $,
       shorten <>/.style={shorten >=#1, shorten <=#1},
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}$};
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}\Pos$};
     \node[state, initial, right=of u0] (u1) {$\Kleene{(\Char{a} \Pos \Char{a} \Union \Char{b})}$};
-    \node[state, right=of u1, accepting, label={above right:=}] (u2) {$\Kleene{(\Pos \Char{a} \Spc \Char{a} \Union \Char{b})}\Pos$};
-    \node[state, accepting, below=of u1, label={above right:=}] (u3) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Char{b})}\Pos$};
+    \node[state, right=of u1, accepting, label={above right:=}] (u2) {$\Kleene{(\Pos \Char{a} \Spc \Char{a} \Union \Pos\Char{b})}\Pos$};
+    \node[state, accepting, below=of u1, label={above right:=}] (u3) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
     \draw (u0) edge[->] node[auto]{$\Char{b}$} (u3.west);
 
-    \node[state, initial, accepting, below=3 of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}$};
+    \node[state, initial, accepting, below=3 of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}\Pos$};
     \node[state, right=of p0] (p1) {$\Kleene{(\Char{a} \Pos \Char{a} \Union \Char{b})}$};
     \draw (p0.north east) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p1.north west);
     \draw (p1.south west) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p0.south east);
