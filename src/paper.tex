@@ -141,6 +141,8 @@ Regularni izrazi so algebra nad jeziki, ki sestavljena iz osnovnih operacij $(\U
 Z njimi lahko opišemo le podmnožico vseh jezikov, ki se imenuje "regularni jeziki".
 Dva regularna izraza sta enaka, če opisujeta enak jezik.
 
+
+
 \section{Končni avtomati}
 
 Končni avtomat je tuple $(\Set{Q}, \Alphabet, \delta, q_0, \Set{F})$, kjer je $\Set{Q}$ končna množica stanj, $\Alphabet$ končna množica znakov ali abeceda, $\delta$ je funkcija prehodov in $\Set{F}$ končna množica končnih stanj.
@@ -154,7 +156,7 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
 
 \Ex
 \begin{equation}
-  \RE{r}_1 = \Kleene{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
+  \RE{r}_1 = \Kleene{(\Char{b} \Seq (\Char{a} \Seq \Char{b})?)} \Seq \Char{c} \\
 \end{equation}
 \begin{align*}
   \Automaton{r_1} &= (\Set{Q}_1, \Alphabet, \delta_1, q_{0, 1}, \Set{F}_1)\\[1em]
@@ -307,7 +309,7 @@ Izhod je automat $\Automaton{\RE{r}} = (\Set{Q}, \Set{\Sigma}, \delta, q_{0}, \S
 \begin{enumerate}
   \item Začnemo z začetnim stanjem:
     \begin{equation*}
-      q_0 = \RE{i}\text{, kjer } \Pos(\RE{i}) \MoveStar \RE{i}
+      q_0 = \RE{i}\text{, kjer } \Pos(\RE{r}) \MoveStar \RE{i}
     \end{equation*}
   \item Za vsak znak $\Char{a} \in \Alphabet$, iz trenutnega stanja $q = \RE{i}$ pridobimo stanja:
     \begin{equation*}
@@ -1000,19 +1002,20 @@ Ujemanje $S$ 0 ali 1 krat.
 \end{tcolorbox}
 
 \Ex
-\begin{equation*}
-  \N{\RE{r}} = \Opt{\Char{a}}
-\end{equation*}
-
-\begin{equation*}
-  \Language{\N{\RE{r}}} = \{ \Str{}, \Str{a} \}
-\end{equation*}
+\begin{align*}
+  \N{\RE{s}} &= \Char{a}\\
+  \N{\RE{r}} &= \Opt{\Char{a}}
+\end{align*}
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{ \Str{a} \}\\
+  \Language{\N{\RE{r}}} &= \{ \Str{}, \Str{a} \}
+\end{align*}
 
 \begin{equation*}
   \Pos(\Opt{\Char{a}}) \Move
   (\Opt{(\Pos\Char{a})})\Pos \MoveX{\Char{a}}
   \Opt{(\Char{a}\Pos)} \Move
-  \Opt{(\Char{a})}\Pos
+  (\Opt{\Char{a}})\Pos
 \end{equation*}
 \begin{center}
   \begin{tikzpicture}
@@ -1021,8 +1024,8 @@ Ujemanje $S$ 0 ali 1 krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$(\Opt{(\Pos\Char{a})})\Pos$};
-    \node[state, accepting, right=of u0] (u1) {$(\Opt{\Char{a}})\Pos$};
+    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$\Opt{(\Pos\Char{a})}\Pos$};
+    \node[state, accepting, right=of u0] (u1) {$\Opt{\Char{a}}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
   \end{tikzpicture}
 \end{center}
@@ -1053,9 +1056,9 @@ Ujemanje $S$ 0 ali 1 krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$(\Opt{(\Pos\Char{a} \Spc \Char{b})})\Pos$};
+    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$\Opt{(\Pos\Char{a} \Spc \Char{b})}\Pos$};
     \node[state, right=of u0] (u1) {$\Opt{(\Char{a} \Pos \Char{b})}$};
-    \node[state, accepting, right=of u1] (u2) {$(\Opt{(\Char{a} \Spc \Char{b})})\Pos$};
+    \node[state, accepting, right=of u1] (u2) {$\Opt{(\Char{a} \Spc \Char{b})}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{b}$} (u2);
   \end{tikzpicture}
@@ -1089,12 +1092,16 @@ Ujemanje $S$ 0 ali 1 krat.
 %\end{tcolorbox}
 
 \Ex
-\begin{equation*}
-  \N{\RE{r}} = \Rep{\Char{a}}{2} = \Char{a} \Seq \Char{a}
-\end{equation*}
-\begin{equation*}
-  \Language{\N{\RE{r}}} = \{ \Str{a}, \Str{a} \}
-\end{equation*}
+\begin{align*}
+  \N{\RE{s}} &= \Char{a}\\
+  \N{\RE{r}} &= \Rep{\Char{a}}{2} = \Char{a} \Seq \Char{a}
+\end{align*}
+
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{ \Str{a} \}\\
+  \Language{\N{\RE{r}}} &= \{ \Str{aa} \}
+\end{align*}
+
 \begin{center}
   \begin{tikzpicture}
     \tikzset{
@@ -1184,13 +1191,15 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
 \end{tcolorbox}
 
 \Ex
-\begin{equation*}
-  \N{\RE{r}} = \Kleene{\Char{a}}
-\end{equation*}
+\begin{align*}
+  \N{\RE{s}} &= \Char{a}\\
+  \N{\RE{r}} &= \Kleene{\Char{a}}
+\end{align*}
 
-\begin{equation*}
-  \Language{\N{\RE{r}}} = \{\Str{}, \Str{a}, \Str{aa}, \Str{aaa}, \dots\}
-\end{equation*}
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{\Str{a}\}\\
+  \Language{\N{\RE{r}}} &= \{\Str{}, \Str{a}, \Str{aa}, \Str{aaa}, \dots\}
+\end{align*}
 
 \begin{equation*}
   \Pos(\Kleene{\Char{a}}) \Move
@@ -1205,14 +1214,117 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$(\Kleene{(\Pos\Char{a})})\Pos$};
-    \node[state, accepting, right=of u0, label={above right:=}] (u1) {$(\Kleene{(\Pos\Char{a})})\Pos$};
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$\Kleene{(\Pos\Char{a})}\Pos$};
+    \node[state, accepting, right=of u0, label={above right:=}] (u1) {$\Kleene{(\Pos\Char{a})}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
 
-    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$(\Kleene{(\Pos\Char{a})})\Pos$};
+    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$\Kleene{(\Pos\Char{a})}\Pos$};
     \draw (p0) edge[->, loop right] node[auto]{$\Char{a}$} (p0);
   \end{tikzpicture}
 \end{center}
+
+\Ex
+\begin{align*}
+  \N{\RE{s}} &= \Char{a} \Spc \Char{b} \\
+  \N{\RE{r}} &= \Kleene{(\Char{a} \Spc \Char{b})}
+\end{align*}
+
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{\Str{ab}\} \\
+  \Language{\N{\RE{r}}} &= \{\Str{}, \Str{ab}, \Str{abab}, \Str{ababab}, \dots\}
+\end{align*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$\Kleene{(\Pos\Char{a}\Spc\Char{b})}\Pos$};
+    \node[state, right=of u0] (u1) {$\Kleene{(\Char{a}\Pos\Char{b})}$};
+    \node[state, accepting, right=of u1, label={above right:=}] (u2) {$\Kleene{(\Pos\Char{a}\Spc\Char{b})}\Pos$};
+    \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
+    \draw (u1) edge[->] node[auto]{$\Char{b}$} (u2);
+
+    \node[state, initial, accepting, below=2 of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\Kleene{(\Pos\Char{a}\Spc\Char{b})}\Pos$};
+    \node[state, right=of p0] (p1) {$\Kleene{(\Char{a}\Pos\Char{b})}$};
+    \draw (p0.north east) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p1.north west);
+    \draw (p1.south west) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{b}$} (p0.south east);
+  \end{tikzpicture}
+\end{center}
+
+\Ex
+
+\begin{equation*}
+  \N{\RE{r}} = \Char{c} \Spc \Kleene{(\Char{a} \Spc \Char{b})}
+\end{equation*}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{\Str{c}, \Str{cab}, \Str{cabab}, \Str{cababab}, \dots\}
+\end{equation*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{c} \Spc \Kleene{(\Char{a} \Spc \Char{b})}$};
+    \node[state, initial, accepting, right=of u0, label={above right:=}] (u1) {$\Char{c} \Spc \Kleene{(\Pos\Char{a} \Spc \Char{b})}\Pos$};
+    \node[state, right=of u1] (u2) {$\Char{c} \Spc \Kleene{(\Char{a} \Pos \Char{b})}$};
+    \node[state, accepting, right=of u2, label={above right:=}] (u3) {$\Char{c} \Spc \Kleene{(\Pos\Char{a} \Spc \Char{b})}\Pos$};
+    \draw (u0) edge[->] node[auto]{$\Char{c}$} (u1);
+    \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
+    \draw (u2) edge[->] node[auto]{$\Char{b}$} (u3);
+
+    \node[state, initial, below=2 of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\Pos\Char{c} \Spc \Kleene{(\Char{a}\Spc\Char{b})}$};
+    \node[state, accepting, right=of p0] (p1) {$\Char{c} \Spc \Kleene{(\Pos\Char{a}\Spc\Char{b})}$};
+    \node[state, right=of p1] (p2) {$\Char{c} \Spc \Kleene{(\Char{a}\Pos\Char{b})}$};
+    \draw (p0) edge[->] node[auto]{$\Char{c}$} (p1);
+    \draw (p1.north east) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p2.north west);
+    \draw (p2.south west) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{b}$} (p1.south east);
+  \end{tikzpicture}
+\end{center}
+\Next
+
+\Ex
+\begin{equation*}
+  \N{\RE{r}} = \Kleene{(\Char{a} \Spc \Char{a} \Union \Char{b})}
+\end{equation*}
+
+\begin{equation*}
+  \Language{\N{\RE{r}}} = \{\Null, \Str{b}, \Str{aa}, \Str{bb}, \Str{aab}, \Str{baa}, \Str{aaaa}, \dots\}
+\end{equation*}
+
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.style={rectangle, rounded corners, inner sep=0.5em},
+      initial text=$ $,
+      shorten <>/.style={shorten >=#1, shorten <=#1},
+    }
+    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$, label={above right:=}] (u0) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}$};
+    \node[state, initial, right=of u0] (u1) {$\Kleene{(\Char{a} \Pos \Char{a} \Union \Char{b})}$};
+    \node[state, right=of u1, accepting, label={above right:=}] (u2) {$\Kleene{(\Pos \Char{a} \Spc \Char{a} \Union \Char{b})}\Pos$};
+    \node[state, accepting, below=of u1, label={above right:=}] (u3) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Char{b})}\Pos$};
+    \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
+    \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
+    \draw (u0) edge[->] node[auto]{$\Char{b}$} (u3.west);
+
+    \node[state, initial, accepting, below=3 of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\Kleene{(\Pos\Char{a} \Spc \Char{a} \Union \Pos\Char{b})}$};
+    \node[state, right=of p0] (p1) {$\Kleene{(\Char{a} \Pos \Char{a} \Union \Char{b})}$};
+    \draw (p0.north east) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p1.north west);
+    \draw (p1.south west) edge[->, bend left, shorten <>=-2pt+\pgflinewidth] node[auto]{$\Char{a}$} (p0.south east);
+    \draw (p0) edge[->, loop below] node[auto]{$\Char{b}$} (p0);
+  \end{tikzpicture}
+\end{center}
+
+\Next
 
 \subsection{Pozitivno zaprtje}
 \Reset
@@ -1243,13 +1355,15 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
 \end{tcolorbox}
 
 \Ex
-\begin{equation*}
-  \N{\RE{r}} = \KleenePlus{\Char{a}}
-\end{equation*}
+\begin{align*}
+  \N{\RE{s}} &= \Char{a}\\
+  \N{\RE{r}} &= \KleenePlus{\Char{a}}
+\end{align*}
 
-\begin{equation*}
-  \Language{\N{\RE{r}}} = \{\Str{a}, \Str{aa}, \Str{aaa}, \dots\}
-\end{equation*}
+\begin{align*}
+  \Language{\N{\RE{s}}} &= \{\Str{a}\}\\
+  \Language{\N{\RE{r}}} &= \{\Str{a}, \Str{aa}, \Str{aaa}, \dots\}
+\end{align*}
 
 \begin{equation*}
   \Pos(\KleenePlus{\Char{a}}) \Move
@@ -1268,13 +1382,13 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
       initial text=$ $,
     }
     \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$] (u0) {$\KleenePlus{(\Pos\Char{a})}$};
-    \node[state, accepting, right=of u0, label={above right:=}] (u1) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
-    \node[state, accepting, right=of u1, label={above right:=}] (u2) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
+    \node[state, accepting, right=of u0, label={above right:=}] (u1) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
+    \node[state, accepting, right=of u1, label={above right:=}] (u2) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
 
-    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
-    \node[state, accepting, right=of p0] (p1) {$(\KleenePlus{(\Pos\Char{a})})\Pos$};
+    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
+    \node[state, accepting, right=of p0] (p1) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \draw (p0) edge[->] node[auto]{$\Char{a}$} (p1);
     \draw (p1) edge[->, loop right] node[auto]{$\Char{a}$} (p1);
   \end{tikzpicture}
@@ -1373,7 +1487,7 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
     \draw (v2) edge[->] node[auto]{$\Char{c}$} (v3);
 
     \node[state, accepting, below right=of v1] (v4) {$\begin{aligned}
-      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
+      \underline{\N{\RE{r}}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
       \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
       \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
       \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Pos \Char{d}
