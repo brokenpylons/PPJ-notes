@@ -1394,7 +1394,7 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
 
-    \node[state, initial, below=of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
+    \node[state, initial, below=of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\KleenePlus{(\Pos\Char{a})}$};
     \node[state, accepting, right=of p0] (p1) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \draw (p0) edge[->] node[auto]{$\Char{a}$} (p1);
     \draw (p1) edge[->, loop right] node[auto]{$\Char{a}$} (p1);
