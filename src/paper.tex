@@ -156,7 +156,7 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
 
 \Ex
 \begin{equation}
-  \RE{r}_1 = \Kleene{(\Char{b} \Seq (\Char{a} \Seq \Char{b})?)} \Seq \Char{c} \\
+  \RE{r}_1 = \KleenePlus{(\Char{b} \Seq (\Char{a} \Seq \Char{b})?)} \Seq \Char{c} \\
 \end{equation}
 \begin{align*}
   \Automaton{r_1} &= (\Set{Q}_1, \Alphabet, \delta_1, q_{0, 1}, \Set{F}_1)\\[1em]
@@ -208,7 +208,7 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
 Vsak regularni izraz lahko ustreza večim različnim avtomatom.
 
 \begin{gather*}
-  \RE{r}_2 = \Kleene{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
+  \RE{r}_2 = \KleenePlus{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
   \Automaton{\RE{r}_2} = (\Set{Q}_2, \Alphabet, \delta_2, q_{0, 2}, \Set{F}_2)
 \end{gather*}
 
