@@ -158,6 +158,25 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
 \begin{equation*}
   \RE{r}_1 = \KleenePlus{(\Char{b} \Seq (\Char{a} \Seq \Char{b})?)} \Seq \Char{c} \\
 \end{equation*}
+\begin{center}
+  \begin{tikzpicture}
+    \tikzset{
+      node distance=1cm,
+      every state/.append style={minimum size=0.5cm},
+      initial text=$ $
+    }
+
+    \node[state, initial, label=above left:$\Automaton{\RE{r}_1}$] (s0) {1};
+    \node[state, right=of s0] (s1) {2};
+    \node[state, accepting, right=of s1] (s2) {3};
+
+    \draw (s0) edge[->, bend left] node[auto]{$\Char{b}$} (s1);
+    \draw (s1) edge[->, bend left] node[auto]{$\Char{a}$} (s0);
+    \draw (s1) edge[->, loop] node[above]{$\Char{b}$} (s1);
+    \draw (s1) edge[->] node[auto]{$\Char{c}$} (s2);
+  \end{tikzpicture}
+\end{center}
+
 \begin{align*}
   \Automaton{r_1} &= (\Set{Q}_1, \Alphabet, \delta_1, q_{0, 1}, \Set{F}_1)\\[1em]
   \Set{Q}_1 &= \{1, 2, 3\} \\[1em]
@@ -183,32 +202,12 @@ Implementiramo jo lahko, kot asociativni seznam, iskalno drevo ali tabelo.
    \hline
 \end{tabular}
 \end{center}
-
-\begin{center}
-  \begin{tikzpicture}
-    \tikzset{
-      node distance=1cm,
-      every state/.append style={minimum size=0.5cm},
-      initial text=$ $
-    }
-
-    \node[state, initial, label=above left:$\Automaton{\RE{r}_1}$] (s0) {1};
-    \node[state, right=of s0] (s1) {2};
-    \node[state, accepting, right=of s1] (s2) {3};
-
-    \draw (s0) edge[->, bend left] node[auto]{$\Char{b}$} (s1);
-    \draw (s1) edge[->, bend left] node[auto]{$\Char{a}$} (s0);
-    \draw (s1) edge[->, loop] node[above]{$\Char{b}$} (s1);
-    \draw (s1) edge[->] node[auto]{$\Char{c}$} (s2);
-  \end{tikzpicture}
-\end{center}
-
 \Ex
 
 Vsak regularni izraz lahko ustreza večim različnim avtomatom.
 
 \begin{gather*}
-  \RE{r}_2 = \KleenePlus{(\Char{b} \Seq (\Char{a} \Spc \Char{b})?)} \Seq \Char{c} \\
+  \RE{r}_2 = \KleenePlus{(\Char{b} \Seq (\Char{a} \Seq \Char{b})?)} \Seq \Char{c} \\
   \Automaton{\RE{r}_2} = (\Set{Q}_2, \Alphabet, \delta_2, q_{0, 2}, \Set{F}_2)
 \end{gather*}
 
@@ -411,7 +410,7 @@ Izhod je automat $\Automaton{\RE{r}} = (\Set{Q}, \Set{\Sigma}, \delta, q_{0}, \S
       initial text=$ $,
     }
     \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{a}$};
-    \node[state, right=of u0] (u1) {$\Char{a}\Pos$};
+    \node[state, accepting, right=of u0] (u1) {$\Char{a}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
   \end{tikzpicture}
 \end{center}
@@ -1336,7 +1335,14 @@ Z drugimi besedami, $s$ je lahko ponovljen $0, 1, 2, \dots, \infty$ krat.
       \KleenePlus{\RE{s}} &= \RE{s} \Union \RE{s} \Seq \RE{s} \Union \RE{s} \Seq \RE{s} \Seq \RE{s} \Union \ldots \\
       &= \Rep{\RE{s}}{1} \Union \Rep{\RE{s}}{2} \Union \ldots \\
       &= \Big\vert_{i = 1}^\infty \Rep{\RE{s}}{i}\\
-      \Language{\KleenePlus{\RE{s}}} &= \bigcup_{i = 1}^\infty \Language{\RE{s}^i}\\[1em]
+      \Language{\KleenePlus{\RE{s}}} &= \bigcup_{i = 1}^\infty \Language{\RE{s}^i}
+    \end{aligned}
+  \end{equation*}
+\end{tcolorbox}
+
+\begin{tcolorbox}[title={Pravila}]
+  \begin{equation*}
+    \begin{aligned}
       \Kleene{\RE{s}} &= \Null \Union \KleenePlus{\RE{s}} = \Opt{(\KleenePlus{\RE{s}})} = \KleenePlus{(\Opt{\RE{s}})}\\
       \Language{\Kleene{\RE{r}}} &= \{\Str{}\} \cup \Language{\KleenePlus{\RE{r}}}
     \end{aligned}
@@ -1382,13 +1388,13 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{\RE{r}}$] (u0) {$\KleenePlus{(\Pos\Char{a})}$};
+    \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\KleenePlus{(\Pos\Char{a})}$};
     \node[state, accepting, right=of u0, label={above right:=}] (u1) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \node[state, accepting, right=of u1, label={above right:=}] (u2) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
 
-    \node[state, initial, below=of u0, accepting, label=above left:$\Automaton{\RE{r}}$] (p0) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
+    \node[state, initial, below=of u0, label=above left:$\Automaton{\RE{r}}$] (p0) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \node[state, accepting, right=of p0] (p1) {$\KleenePlus{(\Pos\Char{a})}\Pos$};
     \draw (p0) edge[->] node[auto]{$\Char{a}$} (p1);
     \draw (p1) edge[->, loop right] node[auto]{$\Char{a}$} (p1);
