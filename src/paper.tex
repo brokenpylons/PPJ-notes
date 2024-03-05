@@ -555,7 +555,7 @@ Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in \Language{\RE{s}}$ in $
 
     \node[state, initial, label=above left:$\Automaton{\RE{r}}$] (u0) {$\Pos\Char{a} \Spc \Char{b} \Spc \Char{c}$};
     \node[state, right=of u0] (u1) {$\Char{a} \Pos \Char{b} \Spc \Char{c}$};
-    \node[state, accepting, right=of u1] (u2) {$\Char{a} \Spc \Char{b} \Pos \Char{c}$};
+    \node[state, right=of u1] (u2) {$\Char{a} \Spc \Char{b} \Pos \Char{c}$};
     \node[state, accepting, right=of u2] (u3) {$\Char{a} \Spc \Char{b} \Spc \Char{c}\Pos$};
     \draw (u0) edge[->] node[auto]{\Char{a}} (u1);
     \draw (u1) edge[->] node[auto]{\Char{b}} (u2);
@@ -1109,8 +1109,8 @@ Ujemanje $S$ 0 ali 1 krat.
       every state/.style={rectangle, rounded corners, inner sep=0.5em},
       initial text=$ $,
     }
-    \node[state, initial, accepting, label=above left:$\Automaton{R}$] (u0) {$\Pos\Char{a} \Spc \Char{a}$};
-    \node[state, accepting, right=of u0] (u1) {$\Char{a} \Pos \Char{a}$};
+    \node[state, initial, label=above left:$\Automaton{R}$] (u0) {$\Pos\Char{a} \Spc \Char{a}$};
+    \node[state, right=of u0] (u1) {$\Char{a} \Pos \Char{a}$};
     \node[state, accepting, right=of u1] (u2) {$\Char{a} \Spc \Char{a}\Pos$};
     \draw (u0) edge[->] node[auto]{$\Char{a}$} (u1);
     \draw (u1) edge[->] node[auto]{$\Char{a}$} (u2);
