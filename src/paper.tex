@@ -1486,7 +1486,7 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
     \draw (v1) edge[->] node[auto]{$\Char{b}$} (v2);
 
     \node[state, accepting, right=of v2] (v3) {$\begin{aligned}
-      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
+      \N{\RE{r}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\Pos\\
       \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
       \underline{\N{\RE{q}}} &= \Char{a} \Spc \Char{b} \Spc \Char{c} \Pos\\
       \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Spc \Char{d}
@@ -1494,7 +1494,7 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
     \draw (v2) edge[->] node[auto]{$\Char{c}$} (v3);
 
     \node[state, accepting, below right=of v1] (v4) {$\begin{aligned}
-      \underline{\N{\RE{r}}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\\
+      \underline{\N{\RE{r}}} &= \KleenePlus{\{\Pos\Char{a}, \dots, \Pos\Char{z}\}}\Pos\\
       \N{\RE{p}} &= \Char{a} \Spc \Char{b}\\
       \N{\RE{q}} &= \Char{a} \Spc \Char{b} \Spc \Char{c}\\
       \N{\RE{t}} &= \Char{a} \Spc \Char{c} \Pos \Char{d}
