@@ -1529,6 +1529,14 @@ Z drugimi besedami, $s$ je lahko ponovljen $1, 2, \dots, \infty$ krat.
 
 Gramatika je tuple $G = (\NonTerminals, \Terminals, \Productions, \NT{S})$, kjer je $\NonTerminals$ končna množica neterminalnih simbolov, $\Terminals$ končna množica terminalnih simbolov, $\Productions$ je končna relacija produkcij $\NonTerminals \times \Kleene{(\NonTerminals \cup \Terminals)}$ in $\NT{S} \in \NonTerminals$ je začetni simbol.
 
+\begin{equation*}
+  \Language{\NT{A}} = \{w \mid \NT{A} \DeriveStar w\}
+\end{equation*}
+
+\begin{equation*}
+  \Language{G} = \Language{\NT{S}}
+\end{equation*}
+
 \section{Osnovne gramatike}
 Gramatike so v veliki meri sestavljene iz naslednjih osnovnih vzorcev.
 
@@ -1616,8 +1624,8 @@ Ločila ni na koncu.
 \subsubsection{Opcijsko}
 \begin{equation*}
   \begin{aligned}[t]
-    \NT{B} &\Arrow \NT{I} \Spc \T{i}\\
-    \NT{I} &\Arrow \T{i} \Union \Null \\[1em]
+    \NT{B} &\Arrow \NT{C} \Spc \T{i}\\
+    \NT{C} &\Arrow \T{i} \Union \Null \\[1em]
     \NT{Val} &\Arrow \NT{Sign} \Spc \T{num}\\
     \NT{Sign} &\Arrow \T{plus} \Union \T{minus} \Union \Null\\[1em]
     \T{num} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
@@ -1635,8 +1643,8 @@ Ločila ni na koncu.
 Nekaj znotraj nečesa.
 \begin{equation*}
   \begin{aligned}[t]
-    \NT{B} &\Arrow \T{l} \Spc \T{I} \Spc \T{r}\\
-    \NT{I} &\Arrow \T{i}\\[1em]
+    \NT{B} &\Arrow \T{l} \Spc \T{C} \Spc \T{r}\\
+    \NT{C} &\Arrow \T{i}\\[1em]
     \NT{Box} &\Arrow \T{lbrak} \Spc \NT{Val} \Spc \T{rbrak}\\
     \NT{Val} &\Arrow \T{num} \Union \T{star}\\[1em]
     \T{num} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
@@ -1674,8 +1682,8 @@ Nekaj znotraj nečesa.
 
 \begin{equation*}
   \begin{aligned}[t]
-    \NT{B} &\Arrow \T{l} \Spc \NT{B} \Spc \T{r} \Union \NT{I}\\
-    \NT{I} &\Arrow \T{i}\\[1em]
+    \NT{B} &\Arrow \T{l} \Spc \NT{B} \Spc \T{r} \Union \NT{C}\\
+    \NT{C} &\Arrow \T{i}\\[1em]
     \NT{Box} &\Arrow \T{lbrak} \Spc \NT{Box} \Spc \T{rbrak} \Union \NT{Val}\\
     \NT{Val} &\Arrow \T{num} \Union \T{star}\\[1em]
     \T{num} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
@@ -1692,9 +1700,9 @@ Nekaj znotraj nečesa.
 
 \begin{equation*}
   \begin{aligned}[t]
-    \NT{L} &\Arrow \NT{I} \Spc \NT{L'}\\
-    \NT{L'} &\Arrow \T{s} \Spc \NT{I} \Spc \NT{L'} \Union \Null\\
-    \NT{I} &\Arrow \T{i} \Union \NT{L}\\[1em]
+    \NT{L} &\Arrow \NT{C} \Spc \NT{L'}\\
+    \NT{L'} &\Arrow \T{s} \Spc \NT{C} \Spc \NT{L'} \Union \Null\\
+    \NT{C} &\Arrow \T{i} \Union \NT{L}\\[1em]
     \NT{Numbers} &\Arrow \T{Val} \Spc \NT{Numbers'}\\
     \NT{Numbers'} &\Arrow \T{sep} \Spc \T{Val} \Spc \NT{Numbers'} \Union \Null\\
     \NT{Val} &\Arrow \T{num} \Union \T{lbrak} \Spc \NT{Numbers} \Spc \T{rbrak}\\[1em]
@@ -2313,6 +2321,7 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
   \end{aligned}
 \end{equation*}
 
+\newpage
 \begin{algorithm}
   function recognizeStart()
     result = recognizeStmts()
