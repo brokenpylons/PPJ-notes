@@ -1943,6 +1943,16 @@ Za vse terminale lahko pripravimo eno samo funkcijo, ki prejme terminal, ki ga �
     $\dots$
 \end{algorithm}
 
+Za produkcijo $\NT{S} \Arrow \NT{A}$, kjer je $\NT{S}$ začetni simbol, pripravimo funkcijo:
+\begin{algorithm}
+  function recognizeStart()
+    result = recognizeA()
+    return when lookahead
+      $\EOF$ $\rightarrow$ result
+      else $\rightarrow$ false
+\end{algorithm}
+Preveriti moramo, ali smo prišli do konca vhoda.
+
 \Ex
 \begin{lstlisting}
 2 - 1 to b;
@@ -1979,10 +1989,11 @@ return a - b
   \end{aligned}
 \end{equation*}
 
+\subsubsection*{{\FIRST}}
 \begin{equation*}
   \begin{aligned}
     \FIRST(\T{num}) &= \{\T{num}\}\\
-    \FIRST(\T{var}) &= \{\T{variable}\}\\
+    \FIRST(\T{var}) &= \{\T{var}\}\\
     \FIRST(\T{minus}) &= \{\T{minus}\}\\
     \FIRST(\T{to}) &= \{\T{to}\}\\
     \FIRST(\T{print}) &= \{\T{print}\}\\
@@ -2025,7 +2036,7 @@ Rekurzija nam ne doda nič novega, torej:
     \FIRST(\NT{Sub}) &= \FIRST(\T{Primary} \Spc \NT{Sub'})\\
     &= \FIRST(\FIRST(\T{Primary}) \Seq \FIRST(\NT{Sub'}))\\
     &= \FIRST(\{\T{num}, \T{var}\} \Seq \{\T{minus}, \Null\})\\
-    &= \FIRST(\{\T{num} \Seq \T{minus}, \T{num}, \T{var} \Seq \T{minus}, \T{variable}\})\\
+    &= \FIRST(\{\T{num} \Seq \T{minus}, \T{num}, \T{var} \Seq \T{minus}, \T{var}\})\\
     &= \{\T{num}, \T{var}\}
   \end{aligned}
 \end{equation*}
@@ -2043,9 +2054,9 @@ Rekurzija nam ne doda nič novega, torej:
     \FIRST(\NT{Expr}) &= \FIRST(\NT{Expr} \Spc \T{to} \Spc \T{var}) \cup \FIRST(\T{print} \Spc \NT{Expr}) \cup \FIRST(\NT{return} \Spc \NT{Expr})\\
     &= \{\T{num}, \T{var}\} \cup \{\T{print}\} \cup \{\T{return}\}\\
     &= \{\T{num}, \T{var}, \T{print}, \T{return}\}\\
-    \FIRST(\NT{Expr} \Spc \T{to} \Spc \T{var}) &= \FIRST(\FIRST(\NT{Expr}) \Seq \FIRST(\T{to}) \Seq \FIRST(\T{variable}))\\
-    &= \FIRST(\{\T{num}, \T{var}\} \Seq \{\T{to}\} \Seq \{\T{variable}\})\\
-    &= \FIRST(\{\T{num} \Seq \T{to} \Seq \T{var}, \T{variable} \Seq \T{to} \Seq \T{variable}\})\\
+    \FIRST(\NT{Expr} \Spc \T{to} \Spc \T{var}) &= \FIRST(\FIRST(\NT{Expr}) \Seq \FIRST(\T{to}) \Seq \FIRST(\T{var}))\\
+    &= \FIRST(\{\T{num}, \T{var}\} \Seq \{\T{to}\} \Seq \{\T{var}\})\\
+    &= \FIRST(\{\T{num} \Seq \T{to} \Seq \T{var}, \T{var} \Seq \T{to} \Seq \T{var}\})\\
     &= \{\T{num}, \T{var}\}\\
     \FIRST(\T{print} \Spc \NT{Expr}) &= \FIRST(\FIRST(\T{print}) \Seq \FIRST(\NT{Expr}))\\
     &= \FIRST(\{\T{print}\} \Seq \{\T{num}, \T{var}\})\\
@@ -2073,7 +2084,7 @@ Rekurzija nam ne doda nič novega, torej:
     \FIRST(\NT{Stmts}) &= \FIRST(\NT{Stmt} \Spc \NT{Stmts'})\\
     &= \FIRST(\FIRST(\NT{Stmt}) \Seq \FIRST(\NT{Stmts'}))\\
     &= \FIRST(\{\T{num}, \T{var}, \T{print}, \T{return}\} \Seq \{\T{seq},\Null\})\\
-    &= \FIRST(\{\T{num} \Seq \T{seq}, \T{var} \Seq \T{seq}, \T{print} \Seq \T{seq}, \T{return} \Seq \T{seq}, \T{num}, \T{variable}, \T{print}, \T{return}\})\\
+    &= \FIRST(\{\T{num} \Seq \T{seq}, \T{var} \Seq \T{seq}, \T{print} \Seq \T{seq}, \T{return} \Seq \T{seq}, \T{num}, \T{var}, \T{print}, \T{return}\})\\
     &= \{\T{num}, \T{var}, \T{print}, \T{return}\}\\
   \end{aligned}
 \end{equation*}
@@ -2085,6 +2096,7 @@ Rekurzija nam ne doda nič novega, torej:
   \end{aligned}
 \end{equation*}
 
+\subsubsection*{{\FOLLOW}}
 \begin{equation*}
   \begin{aligned}
     \FOLLOW(\NT{Start}) &= \{\EOF\}
@@ -2205,6 +2217,8 @@ Na koncu desne strani produkcije ni "nič", ampak $\Null$!
   \end{aligned}
 \end{equation*}
 
+\subsubsection*{{\FIRST} $\Seq$ {\FOLLOW}}
+
 Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo odločiti:
 
 \begin{equation*}
@@ -2232,8 +2246,8 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
 
 \begin{equation*}
   \begin{aligned}
-    \FIRST(\FIRST(\NT{Expr} \Spc \T{to} \Spc \T{var}) \Seq \FOLLOW(\NT{Stmt})) &= \FIRST(\{\T{num}, \T{variable}\} \Seq \{\T{seq}, \EOF\})\\
-    &= \FIRST(\{\T{num} \Seq \T{seq}, \T{var} \Seq \T{seq}, \T{num} \Seq \EOF, \T{variable} \Seq \EOF \})\\
+    \FIRST(\FIRST(\NT{Expr} \Spc \T{to} \Spc \T{var}) \Seq \FOLLOW(\NT{Stmt})) &= \FIRST(\{\T{num}, \T{var}\} \Seq \{\T{seq}, \EOF\})\\
+    &= \FIRST(\{\T{num} \Seq \T{seq}, \T{var} \Seq \T{seq}, \T{num} \Seq \EOF, \T{var} \Seq \EOF \})\\
     &= \{\T{num}, \T{var}\}\\
     \FIRST(\FIRST(\T{print} \Spc \NT{Expr}) \Seq \FOLLOW(\NT{Stmt})) &= \FIRST(\{\T{print}\} \Seq \{\T{seq}, \EOF\})\\
     &= \FIRST(\{\T{print} \Seq \T{seq}, \T{print} \Seq \EOF\})\\
@@ -2255,7 +2269,7 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
 \begin{equation*}
   \begin{aligned}
     \FIRST(\FIRST(\T{minus} \Spc \NT{Primary} \Spc \NT{Sub'}) \Seq \FOLLOW(\NT{Sub'})) &= \FIRST(\{\T{minus}\} \Seq \{\T{to}, \T{seq}, \EOF\})\\
-    &= \FIRST(\{\T{minus}, \T{to}, \T{minus} \Seq \T{seq}, \T{minus} \Seq \EOF\})\\
+    &= \FIRST(\{\T{minus} \Seq \T{to}, \T{minus} \Seq \T{seq}, \T{minus} \Seq \EOF\})\\
     &= \{\T{minus}\}\\
     \FIRST(\FIRST(\Null) \Seq \FOLLOW(\NT{Sub'})) &= \FIRST(\{\Null\} \Seq \{\T{to}, \T{seq}, \EOF\})\\
     &= \FIRST(\{\T{to}, \T{seq}, \EOF\})\\
@@ -2276,8 +2290,8 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
     \FIRST(\FIRST(\T{num}) \Seq \FOLLOW(\NT{Primary})) &= \FIRST(\{\T{num}\} \Seq \{\T{minus}, \T{to}, \T{seq}, \EOF\})\\
     &= \FIRST(\{\T{num} \Seq \T{minus}, \T{num} \Seq \T{to}, \T{num} \Seq \T{seq}, \T{num} \Seq \EOF\})\\
     &= \{\T{num}\}\\
-    \FIRST(\FIRST(\T{var}) \Seq \FOLLOW(\NT{Primary})) &= \FIRST(\{\T{variable}\} \Seq \{\T{minus}, \T{to}, \T{seq}, \EOF\})\\
-    &= \FIRST(\{\T{var} \Seq \T{minus}, \T{variable} \Seq \T{to}, \T{variable} \Seq \T{seq}, \T{variable} \Seq \EOF\})\\
+    \FIRST(\FIRST(\T{var}) \Seq \FOLLOW(\NT{Primary})) &= \FIRST(\{\T{var}\} \Seq \{\T{minus}, \T{to}, \T{seq}, \EOF\})\\
+    &= \FIRST(\{\T{var} \Seq \T{minus}, \T{var} \Seq \T{to}, \T{var} \Seq \T{seq}, \T{var} \Seq \EOF\})\\
     &= \{\T{var}\}
   \end{aligned}
 \end{equation*}
@@ -2301,7 +2315,10 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
 
 \begin{algorithm}
   function recognizeStart()
-    return recognizeStmts()
+    result = recognizeStmts()
+    return when lookahead
+      $\EOF$ $\rightarrow$ result
+      else $\rightarrow$ false
 
   function recognizeStmts()
     return recognizeStmt() $\&\&$ recognizeStmts'()
@@ -2314,7 +2331,7 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
 
   function recognizeStmt()
     return when lookahead
-      $\T{num}, \T{var}$ $\rightarrow$ recognizeExpr() $\&\&$ recognizeTerminal($\T{to}$) $\&\&$ recognizeTerminal($\T{to}$)
+      $\T{num}, \T{var}$ $\rightarrow$ recognizeExpr() $\&\&$ recognizeTerminal($\T{to}$) $\&\&$ recognizeTerminal($\T{var}$)
       $\T{print}$ $\rightarrow$ recognizeTerminal($\T{print}$) $\&\&$ recognizeExpr()
       $\T{return}$ $\rightarrow$ recognizeTerminal($\T{return}$) $\&\&$ recognizeExpr()
       else $\rightarrow$ false
@@ -2343,7 +2360,11 @@ Primer kode za jezike, ki so bolj podobni C:
 
 \begin{algorithm}
   function recognizeStart()
-    return recognizeStmts()
+    result = recognizeStmts()
+    if lookahead == $\EOF$
+      return result
+    else
+      return false
 
   function recognizeStmts()
     return recognizeStmt() $\&\&$ recognizeStmts'()
@@ -2361,7 +2382,7 @@ Primer kode za jezike, ki so bolj podobni C:
     switch lookahead
       case $\T{num}$:
       case $\T{var}$:
-        return recognizeExpr() $\&\&$ recognizeTerminal($\T{to}$) $\&\&$ recognizeTerminal($\T{to}$)
+        return recognizeExpr() $\&\&$ recognizeTerminal($\T{to}$) $\&\&$ recognizeTerminal($\T{var}$)
       case $\T{print}$:
         return recognizeTerminal($\T{print}$) $\&\&$ recognizeExpr()
       case $\T{return}$:
