@@ -2920,4 +2920,199 @@ false => true
 \end{verbatim}
 
 
+\chapter{Sintaktična drevesa}
+
+Sintaktična drevesa je najlažje predstaviti z drevesnimi gramatikami.
+
+\section{Drevesne gramatike}
+
+Podobno kot lahko imamo gramatike nad nizi, lahko imamo gramatike nad drevesi.
+V primeru dreves so terminali vozlišča z $n$ otroci, za $n = 0, 1, 2 \dots$.
+
+\Ex
+\begin{equation*}
+  \begin{aligned}
+    List &\Arrow cell(Num, List) \Union end()\\
+    Num &\Arrow int()\\[1em]
+    List &\Derive cell(Num, List)\\
+      &\Derive cell(int(), List)\\
+      &\Derive cell(int(), cell(Num, List))\\
+      &\Derive cell(int(), cell(int(), List))\\
+      &\Derive cell(int(), cell(int(), cell(Num, List)))\\
+      &\Derive cell(int(), cell(int(), cell(int(), end())))\\
+  \end{aligned}
+\end{equation*}
+
+\Ex
+\begin{equation*}
+  \begin{aligned}
+    Binary &\Arrow node(Binary, Num, Binary) \Union leaf()\\
+    Num &\Arrow int()\\[1em]
+    Binary &\Derive node(Binary, Num, Binary)\\
+      &\Derive node(node(Binary, Num, Binary), Num, Binary)\\
+      &\Derive node(node(leaf(), Num, Binary), Num, Binary)\\
+      &\Derive node(node(leaf(), int(), Binary), Num, Binary)\\
+      &\Derive node(node(leaf(), int(), leaf()), Num, Binary)\\
+      &\Derive node(node(leaf(), int(), leaf()), int(), Binary)\\
+      &\Derive node(node(leaf(), int(), leaf()), int(), node(Binary, Num, Binary))\\
+      &\Derive node(node(leaf(), int(), leaf()), int(), node(leaf(), Num, Binary))\\
+      &\Derive node(node(leaf(), int(), leaf()), int(), node(leaf(), int(), Binary))\\
+      &\Derive node(node(leaf(), int(), leaf()), int(), node(leaf(), int(), leaf()))\\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{Implementacija}
+Drevesne gramatike lahko implementiramo na več načinov.
+
+V OOP jezikih vozlišča predstavimo kot kompozicijo (vprašamo se z in) in operacijo $(\Union)$ kot dedovanje iz vmesnika (vprašamo se z ali).
+Spomnite se, da obstajata dve obliki dedovanja:
+\begin{itemize}
+  \item Dedovanje iz vmesnika, katerega namen je posplošitev.
+    Torej imamo več razredov, ki jih lahko uporabljamo na enak način (imajo enake metode).
+  \item Dedovanje iz razreda, katerega namen je pouporaba.
+    Torej želimo implementirati različico nekega razreda ali pa imamo pripravljeno delno implementacijo razreda, na podlagi katere ustvarjamo nove razrede.
+\end{itemize}
+
+\Ex
+
+Seznam je \textbf{ali} celica, ki vsebuje vrednost \textbf{in} preostanek seznama, \textbf{ali} konec seznama.
+
+\begin{center}
+\begin{tikzpicture}[draw, minimum width=0.5cm, minimum height=0.5cm]
+    \node[draw] (h1) at (0, 0) {};
+    \node[draw] (t1) at (0.5, 0) {};
+
+    \node[draw] (h2) at (2, 0) {};
+    \node[draw] (t2) at (2.5, 0) {};
+
+    \node[draw] (h3) at (4, 0) {};
+    \node[draw] (t3) at (4.5, 0) {};
+
+    \node[draw] (e) at (6, 0) {};
+    \path (e) pic {cross=0.35cm};
+
+    \draw (t1.center) edge[{Circle[]}-{Straight Barb[]}] (h2);
+    \draw (t2.center) edge[{Circle[]}-{Straight Barb[]}] (h3);
+    \draw (t3.center) edge[{Circle[]}-{Straight Barb[]}] (e);
+\end{tikzpicture}
+\end{center}
+
+\Ex
+
+Binarno drevo je \textbf{ali} vozlišče, ki vsebuje levega otroka \textbf{in} vrednost \textbf{in} desnega otroka, \textbf{ali} list.
+
+\begin{center}
+\begin{tikzpicture}[draw, minimum width=0.5cm, minimum height=0.5cm]
+    \node[draw] (l1) at (-0.5, 0) {};
+    \node[draw] (v1) at (0, 0) {};
+    \node[draw] (r1) at (0.5, 0) {};
+
+    \node[draw] (l2) at (-3, -1) {};
+    \node[draw] (v2) at (-2.5, -1) {};
+    \node[draw] (r2) at (-2, -1) {};
+
+    \node[draw] (l3) at (2, -1) {};
+    \node[draw] (v3) at (2.5, -1) {};
+    \node[draw] (r3) at (3, -1) {};
+
+    \node[draw] (e1) at (-4, -2) {};
+    \node[draw] (e2) at (-1, -2) {};
+
+    \node[draw] (e3) at (4, -2) {};
+    \node[draw] (e4) at (1, -2) {};
+    \path (e1) pic {cross=0.35cm};
+    \path (e2) pic {cross=0.35cm};
+    \path (e3) pic {cross=0.35cm};
+    \path (e4) pic {cross=0.35cm};
+
+    \draw (l1.center) edge[{Circle[]}-{Straight Barb[]}] (v2.north);
+    \draw (r1.center) edge[{Circle[]}-{Straight Barb[]}] (v3.north);
+    \draw (l2.center) edge[{Circle[]}-{Straight Barb[]}] (e1.north);
+    \draw (r2.center) edge[{Circle[]}-{Straight Barb[]}] (e2.north);
+    \draw (l3.center) edge[{Circle[]}-{Straight Barb[]}] (e4.north);
+    \draw (r3.center) edge[{Circle[]}-{Straight Barb[]}] (e3.north);
+\end{tikzpicture}
+\end{center}
+
+V funkcijskih jezikih vozlišča predstavimo kot tuple ali record in operacijo ${(\Union)}$ kot označeno unijo.
+Mogoče pa ju je implementirati tudi izključno z uporabo funkcij (Church encoding).
+
+V C++ lahko uporabimo OOP implementacijo ali pa vozlišča predstavimo kot \texttt{struct} in operacijo ${(\Union)}$ kot kombinacijo \texttt{union} in oznake (torej implementiramo označeno unijo).
+V novejših standardih, implementacija označene unije že obstaja v standardni knjižnici \texttt{std::variant}.
+
+\section{Abstraktno sintaktično drevo}
+Za vsak programski jezik obstaja abstraktna gramatika, ki pa je zaradi omejitev razčlenjevalnikov pogosto ne moremo direktno uporabiti.
+Če to abstraktno gramatiko pretvorimo v drevesno gramatiko dobimo abstraktno sintaktično drevo (AST).
+
+\Ex
+\begin{equation*}
+  \begin{aligned}[t]
+    \NT{Numbers} \Arrow \T{num} \Spc \NT{Numbers} \Union \Null\\[1em]
+    \T{num} = \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}
+  \end{aligned}
+  \qquad
+  \begin{aligned}[t]
+    Numbers &\Arrow cell(Num, Numbers) \Union end()\\
+    Num &\Arrow Int
+  \end{aligned}
+\end{equation*}
+Pretvorba je 1:1, vsako desno stran pretvorimo v vozlišče.
+Za terminale, če je mogoče, uporabimo vgrajene tipe.
+
+\Ex
+\begin{equation*}
+  \begin{aligned}[t]
+    \NT{Expr} &\Arrow \NT{Expr} \Spc \T{plus} \Spc \NT{Expr} \\
+    &\Union \NT{Expr} \Spc \T{minus} \Spc \NT{Expr} \\
+    &\Union \T{num}\\
+    &\Union \T{var}\\[1em]
+    \T{num} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
+    \T{char} &= \{\Char{A}, \dots, \Char{Z}, \Char{a}, \dots, \Char{z}, \Char{0}, \dots, \Char{9} \}\\
+    \T{var} &= \KleenePlus{\T{char}}\\
+    \T{plus} &= \Char{+}\\
+    \T{minus} &= \Char{-}\\
+  \end{aligned}
+  \qquad
+  \begin{aligned}[t]
+    Expr &\Arrow plus(Expr, Expr) \\
+    &\Union minus(Expr, Expr) \\
+    &\Union num(Num)\\
+    &\Union var(Var)\\
+    Num &\Arrow Int\\
+    Var &\Arrow String
+  \end{aligned}
+\end{equation*}
+Terminale, ki imajo fiksno vrednost lahko izpustimo iz AST.
+Izrazi so zelo podobni binarnim drevesom, le da imamo različno vrsto vozlišča za vsako operacijo.
+
+\Ex
+\begin{equation*}
+  \begin{aligned}[t]
+    \NT{Stmts} &\Arrow \NT{Stmt} \Spc \NT{Stmts}\\
+    &\Union \Null\\
+    \NT{Stmt} &\Arrow \NT{Var} \Spc \T{assign} \Spc \NT{Expr}\\
+    &\Union \T{print} \Spc \NT{Expr}\\[1em]
+    \T{char} &= \{\Char{A}, \dots, \Char{Z}, \Char{a}, \dots, \Char{z}, \Char{0}, \dots, \Char{9} \}\\
+    \T{var} &= \KleenePlus{\T{char}}\\
+    \T{assign} &= \Char{=}\\
+    \T{semi} &= \Char{;}\\
+    \T{print} &= \Char{print}\\
+  \end{aligned}
+  \qquad
+  \begin{aligned}[t]
+    Stmts &\Arrow seq(Stmt, Stmts) \\
+    &\Union end()\\
+    Stmt &\Arrow assign(Var, Expr) \\
+    &\Union print(Expr) \\
+    Var &= String
+  \end{aligned}
+\end{equation*}
+Izjave lahko predstavimo kot sezname. Lahko pa bi jih predstavili tudi kot izraze, z operatorjem $seq$.
+
+\section{Konkretno sintaktično drevo}
+Za razčlenjevanje moramo abstraktno gramatiko preoblikovati.
+Če preoblikovano gramatiko pretvorimo v podatkoven tip dobimo konkretno sintaktično drevo (CST).
+Ker je nadaljnje transformacije lažje izvesti nad AST, vedno najprej pretvorimo CST v AST.
+Pretvorbo je mogoče izvesti kar med razčlenjevanjem (torej CST ne potrebujemo).
+
 \end{document}
