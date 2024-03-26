@@ -3052,8 +3052,7 @@ Za vsak programski jezik obstaja abstraktna gramatika, ki pa je zaradi omejitev 
   \end{aligned}
   \qquad
   \begin{aligned}[t]
-    Numbers &\Arrow cell(Num, Numbers) \Union end()\\
-    Num &\Arrow Int
+    Numbers &\Arrow cell(Int, Numbers) \Union end()\\
   \end{aligned}
 \end{equation*}
 Pretvorba je 1:1, vsako desno stran pretvorimo v vozlišče.
@@ -3076,10 +3075,8 @@ Za terminale, če je mogoče, uporabimo vgrajene tipe.
   \begin{aligned}[t]
     Expr &\Arrow plus(Expr, Expr) \\
     &\Union minus(Expr, Expr) \\
-    &\Union num(Num)\\
-    &\Union var(Var)\\
-    Num &\Arrow Int\\
-    Var &\Arrow String
+    &\Union num(Int)\\
+    &\Union var(String)
   \end{aligned}
 \end{equation*}
 Terminale, ki imajo fiksno vrednost lahko izpustimo iz AST.
@@ -3102,9 +3099,8 @@ Izrazi so zelo podobni binarnim drevesom, le da imamo različno vrsto vozlišča
   \begin{aligned}[t]
     Stmts &\Arrow seq(Stmt, Stmts) \\
     &\Union end()\\
-    Stmt &\Arrow assign(Var, Expr) \\
-    &\Union print(Expr) \\
-    Var &= String
+    Stmt &\Arrow assign(String, Expr) \\
+    &\Union print(Expr)
   \end{aligned}
 \end{equation*}
 Izjave lahko predstavimo kot sezname. Lahko pa bi jih predstavili tudi kot izraze, z operatorjem $seq$.
@@ -3114,5 +3110,77 @@ Za razčlenjevanje moramo abstraktno gramatiko preoblikovati.
 Če preoblikovano gramatiko pretvorimo v podatkoven tip dobimo konkretno sintaktično drevo (CST).
 Ker je nadaljnje transformacije lažje izvesti nad AST, vedno najprej pretvorimo CST v AST.
 Pretvorbo je mogoče izvesti kar med razčlenjevanjem (torej CST ne potrebujemo).
+
+\chapter{XML sheme}
+
+Imamo lahko tudi drevesne gramatike, kjer imajo vozljišča poljubno število otrok.
+Torej otroci vozlišča spet tvorijo jezik.
+Če se omejimo na regularne jezike jih lahko opišemo z regularnimi izrazi.
+Primer takšnih dreves sta XML in sintaktična drevesa EBNF gramatik.
+
+\Ex
+\begin{equation*}
+  \begin{aligned}
+    Doc &\Arrow inventory(\Kleene{Item})\\
+    Item &\Arrow desk(Desk) \Union chair(Chair) \Union computer(Computer) \\
+    Info &\Arrow location(Location) \Seq \KleenePlus{user(User)}\\
+    Location &\Arrow building(String) \Seq room(Room)\\
+    User &\Arrow name(Capitalized) \Seq surname(Capitalized) \Seq \Opt{role(Role)}\\
+    Desk &\Arrow Info \Seq standing(Boolean)\\
+    Chair &\Arrow Info\\
+    Computer &\Arrow Info \Seq cpu(Quantity) \Seq memory(Quantity) \Seq disk(Quantity)\\
+    Capitalized &\Arrow String\\
+    Role &\Arrow String\\
+    Room &\Arrow Integer\\
+    Quantity &\Arrow Float\\
+  \end{aligned}
+\end{equation*}
+\newpage
+
+\begin{lstlisting}
+<inventory>
+  <desk>
+    <location>
+      <building>G3</building>
+      <room>13</room>
+    </location>
+    <user>
+      <name>Albert</name>
+      <surname>Einstein</surname>
+      <role>Researcher</role>
+    </user>
+    <user>
+      <name>Joe</name>
+      <surname>Biden</surname>
+    </user>
+    <standing>false</standing>
+  </desk>
+  <computer>
+    <location>
+      <building>G3</building>
+      <room>14</room>
+    </location>
+    <user>
+      <name>Angelina</name>
+      <surname>Jolie</surname>
+      <role>Teacher</role>
+    </user>
+    <cpu>4.2</cpu>
+    <memory>10.0</memory>
+    <disk>10.0</disk>
+  </computer>
+  <chair>
+    <location>
+      <building>G3</building>
+      <room>14</room>
+    </location>
+    <user>
+      <name>Issac</name>
+      <surname>Newton</surname>
+      <role>Researcher</role>
+    </user>
+  </chair>
+</inventory>
+\end{lstlisting}
 
 \end{document}
